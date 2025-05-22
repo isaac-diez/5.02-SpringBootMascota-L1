@@ -40,4 +40,8 @@ public class UserService implements UserDetailsService {
 
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), roles);
     }
+
+    public User createUser(User user) {
+        return userRepo.save(user);
+    }
 }

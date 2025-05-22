@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login JWT</title>
+</head>
+<body>
+<h2>Login</h2>
+<form id="login-form">
+    <label>Username: <input type="text" id="username" required></label><br>
+    <label>Password: <input type="password" id="password" required></label><br>
+    <button type="submit">Login</button>
+</form>
+
+<p id="message"></p>
+
+<script>
+    document.getElementById('login-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+            const response = await fetch(`/auth/login?username=${username}&password=${password}`, {
+                method: 'POST'
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                localStorage.setItem('jwt', result.token);
+                document.getElementById('message').innerText = 'Login successful! Token saved.';
+            } else {
+                document.getElementById('message').innerText = 'Login failed: ' + result;
+            }
+        } catch (err) {
+            document.getElementById('message').innerText = 'Error: ' + err.message;
+        }
+    });
+</script>
+</body>
+</html>
