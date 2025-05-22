@@ -51,7 +51,6 @@ public class AuthController {
 
             authenticationManager.authenticate(authToken);
 
-            // Si no lanza excepción, la autenticación fue correcta
             String token = jwtUtil.generateToken(request.getUsername());
 
             return new LoginResponse(token);

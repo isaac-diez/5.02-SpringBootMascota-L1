@@ -56,7 +56,7 @@ public class UserService implements UserDetailsService {
                 .map(roleName -> {
                     Role role = new Role();
                     role.setRoleType(roleName);
-                    role.setUser(user); // relación inversa
+                    role.setUser(user);
                     return role;
                 })
                 .collect(Collectors.toList());

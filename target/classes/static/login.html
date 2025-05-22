@@ -22,15 +22,19 @@
         const password = document.getElementById('password').value;
 
         try {
-            const response = await fetch(`/auth/login?username=${username}&password=${password}`, {
-                method: 'POST'
-            });
+        const response = await fetch('/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
 
             const result = await response.json();
 
             if (response.ok) {
                 localStorage.setItem('jwt', result.token);
-                document.getElementById('message').innerText = 'Login successful! Token saved.';
+                document.getElementById('message').innerText = 'Login successful! Token saved: ' + result.token;
             } else {
                 document.getElementById('message').innerText = 'Login failed: ' + result;
             }
