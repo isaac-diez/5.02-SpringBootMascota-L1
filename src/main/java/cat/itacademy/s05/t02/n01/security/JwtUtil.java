@@ -1,14 +1,11 @@
 package cat.itacademy.s05.t02.n01.security;
 
-import cat.itacademy.s05.t02.n01.model.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.*;
-
-import static javax.crypto.Cipher.SECRET_KEY;
 
 @Component
 public class JwtUtil {
@@ -47,7 +44,7 @@ public class JwtUtil {
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    public List<String> extractRoles(String token) {
+    public List extractRoles(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token).getBody().get("roles", List.class);
     }
