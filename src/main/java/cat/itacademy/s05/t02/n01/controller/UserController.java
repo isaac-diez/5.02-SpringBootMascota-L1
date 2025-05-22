@@ -17,8 +17,8 @@ public class UserController {
         return "Hello USER!";
     }
 
-    @PostMapping("/add")
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
-    }
+//    @PostMapping("/add")
+//    public User createUser(@RequestBody User user) {
+//        return userService.createUser(user);
+//    }
 }

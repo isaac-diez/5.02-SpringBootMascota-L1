@@ -14,7 +14,7 @@ import lombok.Data;
         private int id_role;
 
         @NotBlank
-        private String role;
+        private String roleType;
 
         @ManyToOne
         @JoinColumn(name = "id_user")
