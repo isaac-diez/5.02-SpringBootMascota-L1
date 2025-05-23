@@ -1,35 +1,84 @@
 package cat.itacademy.s05.t02.n01.service;
 
+import cat.itacademy.s05.t02.n01.Repo.UserRepo;
+import cat.itacademy.s05.t02.n01.model.Role;
 import cat.itacademy.s05.t02.n01.model.User;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class UserServiceTest {
 
-    @Autowired
+    @Mock
+    private UserRepo userRepo;
+
+    @InjectMocks
     private UserService userService;
 
     @Test
-    void loadUserByUsername() {
+    void testLoadUserByUsername_whenUserExists_returnsUserDetails() {
+        Role role = new Role();
+        role.setRoleType("ROLE_ADMIN");
+
+        User user = new User();
+        user.setUsername("TestLoadUser");
+        user.setPassword("1234");
+        user.setRoles(List.of(role));
+
+        when(userRepo.findByUsername("TestLoadUser")).thenReturn(user);
+
+        UserDetails userDetails = userService.loadUserByUsername("TestLoadUser");
+
+        assertEquals("TestLoadUser", userDetails.getUsername());
+        assertEquals("1234", userDetails.getPassword());
+        assertTrue(userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN")));
+
 
     }
 
-    @Transactional
     @Test
-    void createUser() {
+    void testLoadUserByUsername_whenUserNotFound_throwsException() {
 
+        when(userRepo.findByUsername("unknown")).thenReturn(null);
+
+        assertThrows(UsernameNotFoundException.class, () -> {
+            userService.loadUserByUsername("unknown");
+        });
+    }
+
+    @Test
+    void testCreateNewUser() {
+
+        Role role = new Role();
+        role.setRoleType("ROLE_USER");
         List<String> roles = List.of("ROLE_USER");
-        User user = userService.createUser("test", "isaac", roles);
 
-        Assertions.assertEquals("test", user.getUsername());
-        Assertions.assertEquals(1, user.getRoles().size());
-        Assertions.assertEquals("ROLE_USER", user.getRoles().get(0).getRoleType());
+        User user = new User();
+        user.setUsername("TestCreateUser");
+        user.setPassword("1234");
+        user.setRoles(List.of(role));
 
+        userService.createUser(user.getUsername(),user.getPassword(), roles);
+
+        when(userRepo.findByUsername("TestCreateUser")).thenReturn(user);
+
+        UserDetails userDetails = userService.loadUserByUsername("TestCreateUser");
+
+        assertEquals("TestCreateUser", userDetails.getUsername());
+        assertEquals("1234", userDetails.getPassword());
+        assertTrue(userDetails.getAuthorities().stream()
+                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER")));
     }
 }
