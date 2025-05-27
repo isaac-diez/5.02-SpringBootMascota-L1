@@ -1,6 +1,8 @@
 package cat.itacademy.s05.t02.n01.service;
 
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
+import cat.itacademy.s05.t02.n01.exception.UserIdNotFoundException;
+import cat.itacademy.s05.t02.n01.exception.UsernameAlreadyInDataBaseException;
 import cat.itacademy.s05.t02.n01.model.Role;
 import cat.itacademy.s05.t02.n01.model.User;
 import jakarta.transaction.Transactional;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service("userDetailsService")
@@ -44,7 +47,28 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), roles);
     }
 
+    public UserDetails loadUserById(int id) throws UsernameNotFoundException {
+
+        User user = userRepo.findById(id)
+                .orElseThrow(() -> new UserIdNotFoundException(id));
+
+        var roles = new ArrayList<GrantedAuthority>();
+
+        for (Role role : user.getRoles()) {
+            roles.add(new SimpleGrantedAuthority(role.getRoleType()));
+        }
+
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), roles);
+    }
+
     public User createUser(String username, String rawPassword, List<String> roleNames) {
+
+        User existingUser = userRepo.findByUsername(username);
+
+        if (existingUser != null) {
+            throw new UsernameAlreadyInDataBaseException(username);
+        }
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(rawPassword);
 
