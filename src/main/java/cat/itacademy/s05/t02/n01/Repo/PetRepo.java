@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PetRepo extends JpaRepository<Pet, Integer> {
+public interface PetRepo extends JpaRepository<Pet, String> {
     Optional<Pet> findById(String id);
 }
