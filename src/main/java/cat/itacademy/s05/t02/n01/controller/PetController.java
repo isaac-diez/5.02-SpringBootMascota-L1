@@ -3,6 +3,7 @@ package cat.itacademy.s05.t02.n01.controller;
 import cat.itacademy.s05.t02.n01.model.Pet;
 import cat.itacademy.s05.t02.n01.model.PetDTO;
 import cat.itacademy.s05.t02.n01.model.User;
+import cat.itacademy.s05.t02.n01.service.CustomUserDetailsService;
 import cat.itacademy.s05.t02.n01.service.PetService;
 import cat.itacademy.s05.t02.n01.service.UserService;
 import cat.itacademy.s05.t02.n01.service.impl.PetMapper;
@@ -32,12 +33,12 @@ public class PetController {
             @RequestHeader("userId") int userId,
             @Valid @RequestBody PetDTO petDto) {
 
-        User user = (User) userService.loadUserById(userId);
+        User user = userService.findUserById(userId);
 
         Pet createdPet = petService.createPet(user, petDto);
         PetDTO responseDto = petMapper.toDto(createdPet);
 
-        return ResponseEntity.created(URI.create("/pets/" + createdPet.getId()))
+        return ResponseEntity.created(URI.create("/pets/" + createdPet.getPet_id()))
                 .body(responseDto);
     }
 
