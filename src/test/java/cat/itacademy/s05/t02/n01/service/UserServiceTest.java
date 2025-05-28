@@ -3,8 +3,6 @@ package cat.itacademy.s05.t02.n01.service;
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
 import cat.itacademy.s05.t02.n01.model.Role;
 import cat.itacademy.s05.t02.n01.model.User;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -34,7 +33,7 @@ class UserServiceTest {
         User user = new User();
         user.setUsername("TestLoadUser");
         user.setPassword("1234");
-        user.setRoles(List.of(role));
+        user.setRoles(Set.of(role));
 
         when(userRepo.findByUsername("TestLoadUser")).thenReturn(user);
 
@@ -68,7 +67,7 @@ class UserServiceTest {
         User user = new User();
         user.setUsername("TestCreateUser");
         user.setPassword("1234");
-        user.setRoles(List.of(role));
+        user.setRoles(Set.of(role));
 
         userService.createUser(user.getUsername(),user.getPassword(), roles);
 

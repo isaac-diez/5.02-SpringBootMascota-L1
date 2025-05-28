@@ -1,24 +1,22 @@
 package cat.itacademy.s05.t02.n01.service;
 
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
-import cat.itacademy.s05.t02.n01.exception.UserIdNotFoundException;
-import cat.itacademy.s05.t02.n01.exception.UsernameAlreadyInDataBaseException;
+import cat.itacademy.s05.t02.n01.exception.*;
 import cat.itacademy.s05.t02.n01.model.Role;
 import cat.itacademy.s05.t02.n01.model.User;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service("userDetailsService")
@@ -61,6 +59,11 @@ public class UserService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), roles);
     }
 
+    public User findUserById(Integer userId) {
+        return userRepo.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+    }
+
     public User createUser(String username, String rawPassword, List<String> roleNames) {
 
         User existingUser = userRepo.findByUsername(username);
@@ -76,14 +79,14 @@ public class UserService implements UserDetailsService {
         user.setUsername(username);
         user.setPassword(encodedPassword);
 
-        List<Role> roles = roleNames.stream()
+        Set<Role> roles = roleNames.stream()
                 .map(roleName -> {
                     Role role = new Role();
                     role.setRoleType(roleName);
                     role.setUser(user);
                     return role;
                 })
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
 
         user.setRoles(roles);
 
