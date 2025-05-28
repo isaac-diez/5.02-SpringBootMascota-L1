@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Entity
@@ -13,10 +14,10 @@ public class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private String pet_id;
 
     private String name;
-    private PetType petType;
+    private PetType type;
 
     @Embedded
     private Level levels = new Level();
@@ -27,6 +28,8 @@ public class Pet {
 
     private LocalDateTime dob;
     private boolean isSleeping;
+
+    @Column(name="days_old")
     private int daysOld;
 
     @ManyToOne
@@ -40,22 +43,22 @@ public class Pet {
     @Embeddable
     @Data
     public static class Level {
-        private int hungryLevel;
-        private int energyLevel;
-        private int happyLevel;
-        private int hygieneLevel;
-        private int healthLevel;
+        private int hungry;
+        private int energy;
+        private int happy;
+        private int hygiene;
+        private int health;
 
         public void alimentar() {
-            this.hungryLevel = Math.max(0, this.hungryLevel - 20);
+            this.hungry = Math.max(0, this.hungry - 20);
         }
     }
 
     public void updateNeeds() {
-        this.levels.hungryLevel = Math.min(100, levels.hungryLevel + 5);
-        this.levels.energyLevel = Math.max(0, levels.energyLevel - 3);
-        if(levels.hungryLevel > 70) this.levels.happyLevel -= 2;
-        if(levels.hygieneLevel < 30) this.levels.healthLevel -= 1;
+        this.levels.hungry = Math.min(100, levels.hungry + 5);
+        this.levels.energy = Math.max(0, levels.energy - 3);
+        if(levels.hungry > 70) this.levels.happy -= 2;
+        if(levels.hygiene < 30) this.levels.health -= 1;
     }
 
 //    public void alimentar() {
@@ -71,7 +74,9 @@ public class Pet {
 //            this.nivelFelicidad += 10; // Bonus si estaba muy hambrienta
 //        }
 
-
+    public int getDaysOld() {
+        return Math.toIntExact(ChronoUnit.DAYS.between(this.dob, LocalDateTime.now()));
+    }
 
 
 }
