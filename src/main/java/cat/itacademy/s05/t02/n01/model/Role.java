@@ -1,11 +1,17 @@
 package cat.itacademy.s05.t02.n01.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import lombok.Data;
+import lombok.*;
 
-    @Entity
-    @Data
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(exclude = {"user"})
+@ToString(exclude = {"user"})
     @Table(name="roles")
     public class Role {
 
@@ -18,6 +24,6 @@ import lombok.Data;
 
         @ManyToOne
         @JoinColumn(name = "id_user")
+        @JsonBackReference
         private User user;
-
 }

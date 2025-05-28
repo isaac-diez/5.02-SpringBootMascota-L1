@@ -62,7 +62,7 @@ class UserServiceTest {
 
         Role role = new Role();
         role.setRoleType("ROLE_USER");
-        List<String> roles = List.of("ROLE_USER");
+        Set<String> roles = Set.of("ROLE_USER");
 
         User user = new User();
         user.setUsername("TestCreateUser");

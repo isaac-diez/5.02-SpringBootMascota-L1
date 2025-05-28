@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
     }
 
-    public User createUser(String username, String rawPassword, List<String> roleNames) {
+    public User createUser(String username, String rawPassword, Set<String> roleNames) {
 
         User existingUser = userRepo.findByUsername(username);
 

@@ -1,14 +1,20 @@
 package cat.itacademy.s05.t02.n01.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(exclude = {"user"})
+@ToString(exclude = {"user"})
 @Table(name = "pets")
 public class Pet {
 
@@ -37,6 +43,7 @@ public class Pet {
     private User user;
 
     @OneToMany(mappedBy = "pet", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
     private List<Event> eventList;
 
 
@@ -77,6 +84,4 @@ public class Pet {
     public int getDaysOld() {
         return Math.toIntExact(ChronoUnit.DAYS.between(this.dob, LocalDateTime.now()));
     }
-
-
 }
