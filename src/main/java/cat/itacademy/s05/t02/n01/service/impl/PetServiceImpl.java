@@ -6,6 +6,7 @@ import cat.itacademy.s05.t02.n01.model.*;
 import cat.itacademy.s05.t02.n01.service.PetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -35,24 +36,15 @@ public class PetServiceImpl implements PetService {
         // Otras verificaciones...
     }
 
-    public PetDTO convertToDto(Pet pet) {
-        PetDTO dto = new PetDTO();
-        dto.setId(pet.getId());
-        dto.setPetName(pet.getName());
-
-        return dto;
-    }
-
     public Pet createPet(User user, PetDTO petDto) {
-        // Validación básica
+
         if (user == null || petDto == null) {
             throw new IllegalArgumentException("User and PetDTO can't be null");
         }
 
-        // Crear nueva mascota desde el DTO
         Pet pet = new Pet();
         pet.setName(petDto.getPetName());
-        pet.setPetType(petDto.getPetType());
+        pet.setType(petDto.getPetType());
         pet.setUser(user);
         pet.setDob(LocalDateTime.now());
         pet.setDaysOld(0);
@@ -62,11 +54,11 @@ public class PetServiceImpl implements PetService {
 
         // Inicializar niveles
         Pet.Level initialLevels = new Pet.Level();
-        initialLevels.setHungryLevel(50);
-        initialLevels.setEnergyLevel(80);
-        initialLevels.setHappyLevel(70);
-        initialLevels.setHygieneLevel(90);
-        initialLevels.setHealthLevel(100);
+        initialLevels.setHungry(50);
+        initialLevels.setEnergy(80);
+        initialLevels.setHappy(70);
+        initialLevels.setHygiene(90);
+        initialLevels.setHealth(100);
         pet.setLevels(initialLevels);
 
         // Guardar en base de datos
