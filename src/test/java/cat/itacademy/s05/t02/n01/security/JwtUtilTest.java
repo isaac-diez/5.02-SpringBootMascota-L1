@@ -1,11 +1,8 @@
 package cat.itacademy.s05.t02.n01.security;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,8 +18,10 @@ class JwtUtilTest {
                 .roles("USER")
                 .build();
 
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+
         // 2. Genera token
-        String token = jwtUtil.generateToken(userDetails.getUsername(), Collections.singleton(new SimpleGrantedAuthority("USER")));
+        String token = jwtUtil.generateToken(userDetails.getUsername(), role);
         System.out.println(token);
 
         // 3. Verificaciones
