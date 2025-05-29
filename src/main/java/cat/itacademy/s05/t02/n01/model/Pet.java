@@ -38,11 +38,11 @@ public class Pet {
     @Column(name="days_old")
     private int daysOld;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
     private User user;
 
-    @OneToMany(mappedBy = "pet", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private List<Event> eventList;
 

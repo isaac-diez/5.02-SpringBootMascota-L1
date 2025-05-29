@@ -46,7 +46,7 @@ class AuthControllerTest {
         user.setUsername("testuser");
         // Asegúrate que la contraseña que guardas es la que usarás en el login
         user.setPassword(passwordEncoder.encode("testpass"));
-        user.setRole("ROLE_USER"); // Asegúrate que este rol es el que espera tu lógica
+        user.setRole("USER"); // Asegúrate que este rol es el que espera tu lógica
         userRepo.save(user);
         log.info("User saved for test: {}", user.getUsername());
     }

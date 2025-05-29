@@ -38,9 +38,9 @@ public class User {
     @NotBlank
     private String role;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Pet> pets;
-    
+
 }
 

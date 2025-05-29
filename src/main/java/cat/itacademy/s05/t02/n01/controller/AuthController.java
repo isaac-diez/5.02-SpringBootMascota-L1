@@ -14,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -48,8 +49,12 @@ public class AuthController {
     @Autowired
     private UserRepo userRepo;
 
+//    @Autowired
+//    private CustomUserDetailsService customUserDetailsService;
+
     @Autowired
-    private CustomUserDetailsService customUserDetailsService;
+    private UserDetailsService userDetailsService;
+
 
     private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
@@ -61,7 +66,7 @@ public class AuthController {
 
             authenticationManager.authenticate(authToken);
 
-            UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getUsername());
+            UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
 
             String role = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)

@@ -1,12 +1,12 @@
 package cat.itacademy.s05.t02.n01.security;
 
-import cat.itacademy.s05.t02.n01.service.CustomUserDetailsService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -18,11 +18,11 @@ import java.util.Collections;
 public class JwtRequestFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final UserDetailsService userDetailsService;
 
-    public JwtRequestFilter(JwtUtil jwtUtil, CustomUserDetailsService customUserDetailsService) {
+    public JwtRequestFilter(JwtUtil jwtUtil, UserDetailsService userDetailsService) {
         this.jwtUtil = jwtUtil;
-        this.customUserDetailsService = customUserDetailsService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
