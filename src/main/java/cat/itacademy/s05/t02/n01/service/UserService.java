@@ -2,22 +2,17 @@ package cat.itacademy.s05.t02.n01.service;
 
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
 import cat.itacademy.s05.t02.n01.exception.*;
-import cat.itacademy.s05.t02.n01.model.Role;
 import cat.itacademy.s05.t02.n01.model.User;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service("userDetailsService")
 @Slf4j
@@ -30,19 +25,12 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        User user = userRepo.findByUsername(username);
+        User user = userRepo.findByUsername(username).
+                orElseThrow(() -> new UsernameNotFoundException(username));
 
-        if (user == null) {
-            throw new UsernameNotFoundException(username);
-        }
+        var role = new SimpleGrantedAuthority("ROLE_" + user.getRole());
 
-        var roles = new ArrayList<GrantedAuthority>();
-
-        for (Role role : user.getRoles()) {
-            roles.add(new SimpleGrantedAuthority(role.getRoleType()));
-        }
-
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), roles);
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), Collections.singleton(role));
     }
 
     public UserDetails loadUserById(int id) throws UsernameNotFoundException {
@@ -50,13 +38,9 @@ public class UserService implements UserDetailsService {
         User user = userRepo.findById(id)
                 .orElseThrow(() -> new UserIdNotFoundException(id));
 
-        var roles = new ArrayList<GrantedAuthority>();
+        var role = new SimpleGrantedAuthority("ROLE_" + user.getRole());
 
-        for (Role role : user.getRoles()) {
-            roles.add(new SimpleGrantedAuthority(role.getRoleType()));
-        }
-
-        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), roles);
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), Collections.singleton(role));
     }
 
     public User findUserById(Integer userId) {
@@ -64,9 +48,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
     }
 
-    public User createUser(String username, String rawPassword, Set<String> roleNames) {
+    public User createUser(String username, String rawPassword, String role) {
 
-        User existingUser = userRepo.findByUsername(username);
+        Optional<User> existingUser = userRepo.findByUsername(username);
 
         if (existingUser != null) {
             throw new UsernameAlreadyInDataBaseException(username);
@@ -78,17 +62,7 @@ public class UserService implements UserDetailsService {
         User user = new User();
         user.setUsername(username);
         user.setPassword(encodedPassword);
-
-        Set<Role> roles = roleNames.stream()
-                .map(roleName -> {
-                    Role role = new Role();
-                    role.setRoleType(roleName);
-                    role.setUser(user);
-                    return role;
-                })
-                .collect(Collectors.toSet());
-
-        user.setRoles(roles);
+        user.setRole(role);
 
         return userRepo.save(user);
     }
