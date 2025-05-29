@@ -1,7 +1,10 @@
 package cat.itacademy.s05.t02.n01.security;
 
+import cat.itacademy.s05.t02.n01.controller.AuthController;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -12,6 +15,7 @@ import java.util.*;
 @Component
 public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     public JwtUtil() {
     }
@@ -26,14 +30,21 @@ public class JwtUtil {
 //                .compact();
 //    }
 
-    public String generateToken(String username, Set<GrantedAuthority> roles) {
-        return Jwts.builder()
+    public String generateToken(String username, String role) {
+        String token= Jwts.builder()
                 .setSubject(username)
-                .claim("roles", roles)
+                .claim("role", role)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
-                .signWith(SignatureAlgorithm.HS256, key)
+                .signWith(key)
                 .compact();
+
+//        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+//
+//        log.info("Generated JWT Token: {}", token);
+//        log.info("Token Claims: {}", claims);
+
+        return token;
     }
 
     public boolean validateToken(String token) {
@@ -50,9 +61,13 @@ public class JwtUtil {
                 .parseClaimsJws(token).getBody().getSubject();
     }
 
-    public Set extractRoles(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody().get("roles", Set.class);
+    public String extractRole(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("role", String.class);
     }
 }
 

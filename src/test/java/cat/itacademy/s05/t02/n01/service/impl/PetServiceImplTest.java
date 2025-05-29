@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,7 +66,8 @@ class PetServiceImplTest {
 
     @Test
     void createPet_WithRealUser_ShouldSavePet() {
-        User user = userRepo.findByUsername("Isaac");
+        User user = userRepo.findByUsername("Isaac")
+                .orElseThrow(() -> new UsernameNotFoundException("User Isaac not found in DB"));
 
         PetDTO mockDto = new PetDTO();
         mockDto.setPetName("Max");

@@ -1,21 +1,13 @@
 package cat.itacademy.s05.t02.n01.service;
 
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
-import cat.itacademy.s05.t02.n01.model.Role;
 import cat.itacademy.s05.t02.n01.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static java.util.function.Predicate.not;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {

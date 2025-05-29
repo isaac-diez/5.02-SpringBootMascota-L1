@@ -1,8 +1,8 @@
 package cat.itacademy.s05.t02.n01.service;
 
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
-import cat.itacademy.s05.t02.n01.model.Role;
 import cat.itacademy.s05.t02.n01.model.User;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -10,8 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -27,15 +26,13 @@ class UserServiceTest {
 
     @Test
     void testLoadUserByUsername_whenUserExists_returnsUserDetails() {
-        Role role = new Role();
-        role.setRoleType("ROLE_ADMIN");
 
         User user = new User();
         user.setUsername("TestLoadUser");
         user.setPassword("1234");
-        user.setRoles(Set.of(role));
+        user.setRole("ADMIN");
 
-        when(userRepo.findByUsername("TestLoadUser")).thenReturn(user);
+        when(userRepo.findByUsername("TestLoadUser")).thenReturn(Optional.of(user));
 
         UserDetails userDetails = userService.loadUserByUsername("TestLoadUser");
 
@@ -50,28 +47,23 @@ class UserServiceTest {
     @Test
     void testLoadUserByUsername_whenUserNotFound_throwsException() {
 
-        when(userRepo.findByUsername("unknown")).thenReturn(null);
-
         assertThrows(UsernameNotFoundException.class, () -> {
             userService.loadUserByUsername("unknown");
         });
     }
 
+    @Transactional
     @Test
     void testCreateNewUser() {
-
-        Role role = new Role();
-        role.setRoleType("ROLE_USER");
-        Set<String> roles = Set.of("ROLE_USER");
 
         User user = new User();
         user.setUsername("TestCreateUser");
         user.setPassword("1234");
-        user.setRoles(Set.of(role));
+        user.setRole("USER");
 
-        userService.createUser(user.getUsername(),user.getPassword(), roles);
+        when(userRepo.findByUsername("TestCreateUser")).thenReturn(Optional.of(user));
 
-        when(userRepo.findByUsername("TestCreateUser")).thenReturn(user);
+        userService.createUser(user.getUsername(),user.getPassword(),user.getRole());
 
         UserDetails userDetails = userService.loadUserByUsername("TestCreateUser");
 

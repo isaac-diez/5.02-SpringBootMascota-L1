@@ -50,11 +50,8 @@ public class UserService implements UserDetailsService {
 
     public User createUser(String username, String rawPassword, String role) {
 
-        Optional<User> existingUser = userRepo.findByUsername(username);
-
-        if (existingUser != null) {
-            throw new UsernameAlreadyInDataBaseException(username);
-        }
+        User existingUser = userRepo.findByUsername(username).
+                orElseThrow(() -> new UsernameAlreadyInDataBaseException(username));
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(rawPassword);
