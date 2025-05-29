@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"roles", "pets"})
-@ToString(exclude = {"roles", "pets"})
+@EqualsAndHashCode(exclude = {"pets"})
+@ToString(exclude = {"pets"})
 @Table(name = "users")
 public class User {
     @Id
@@ -35,9 +35,8 @@ public class User {
     @NotBlank
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JsonManagedReference
-    private Set<Role> roles = new HashSet<>();
+    @NotBlank
+    private String role;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
