@@ -6,12 +6,13 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="Events")
+@Table(name="events")
 @Data
 public class Event {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
+        @Column(name="id_event")
         private int id;
 
         private EventType type;

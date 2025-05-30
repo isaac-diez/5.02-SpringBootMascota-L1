@@ -61,9 +61,9 @@ class UserServiceTest {
         user.setPassword("1234");
         user.setRole("USER");
 
-        when(userRepo.findByUsername("TestCreateUser")).thenReturn(Optional.of(user));
-
         userService.createUser(user.getUsername(),user.getPassword(),user.getRole());
+
+        when(userRepo.findByUsername("TestCreateUser")).thenReturn(Optional.of(user));
 
         UserDetails userDetails = userService.loadUserByUsername("TestCreateUser");
 

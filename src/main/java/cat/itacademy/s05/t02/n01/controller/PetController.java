@@ -3,11 +3,9 @@ package cat.itacademy.s05.t02.n01.controller;
 import cat.itacademy.s05.t02.n01.model.Pet;
 import cat.itacademy.s05.t02.n01.model.PetDTO;
 import cat.itacademy.s05.t02.n01.model.User;
-import cat.itacademy.s05.t02.n01.service.CustomUserDetailsService;
 import cat.itacademy.s05.t02.n01.service.PetService;
 import cat.itacademy.s05.t02.n01.service.UserService;
 import cat.itacademy.s05.t02.n01.service.impl.PetMapper;
-import cat.itacademy.s05.t02.n01.service.impl.PetServiceImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +36,7 @@ public class PetController {
         Pet createdPet = petService.createPet(user, petDto);
         PetDTO responseDto = petMapper.toDto(createdPet);
 
-        return ResponseEntity.created(URI.create("/pets/" + createdPet.getPet_id()))
+        return ResponseEntity.created(URI.create("/pets/" + createdPet.getPetId()))
                 .body(responseDto);
     }
 

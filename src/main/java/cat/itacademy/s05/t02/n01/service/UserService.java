@@ -54,8 +54,6 @@ public class UserService implements UserDetailsService {
             throw new UsernameAlreadyInDataBaseException("Username " + username + " already exists.");
         }
 
-        Optional<User> existingUser = userRepo.findByUsername(username);
-
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(rawPassword);
 

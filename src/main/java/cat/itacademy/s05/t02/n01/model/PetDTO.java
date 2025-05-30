@@ -19,7 +19,7 @@ public class PetDTO implements Serializable {
     @NotNull(message = "El tipo de mascota es obligatorio")
     private PetType petType;
 
-    private String id;
+    private Integer id;
     private int happyLevel;
     private EvolutionState evolutionState;
 

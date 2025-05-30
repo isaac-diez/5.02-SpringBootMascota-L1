@@ -6,11 +6,13 @@ import cat.itacademy.s05.t02.n01.model.User;
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
 import cat.itacademy.s05.t02.n01.security.JwtRequestFilter;
 import cat.itacademy.s05.t02.n01.security.JwtUtil;
-import cat.itacademy.s05.t02.n01.service.CustomUserDetailsService;
+import cat.itacademy.s05.t02.n01.service.UserService;
 import jakarta.servlet.ServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,13 +26,14 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class AuthControllerUnitTest {
+@SpringBootTest
+class AuthControllerTest_NEW {
 
     @Mock
     private AuthenticationManager authenticationManager;
 
     @Mock
-    private CustomUserDetailsService customUserDetailsService;
+    private UserService userService;
 
     @Mock
     private UserRepo userRepo;
@@ -62,7 +65,7 @@ class AuthControllerUnitTest {
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).
                 thenReturn(null);
         // Devuelve userDetails esperado
-        when(customUserDetailsService.loadUserByUsername("testuser")).thenReturn(userDetails);
+        when(userService.loadUserByUsername("testuser")).thenReturn(userDetails);
 
         // Act
         var responseEntity = authController.login(request);
@@ -92,12 +95,12 @@ class AuthControllerUnitTest {
         ServletResponse response = mock(HttpServletResponse.class);
         FilterChain filterChain = mock(FilterChain.class);
 
-        JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(jwtUtil, customUserDetailsService);
+        JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(jwtUtil, userService);
 
         // Mock para cargar usuario dentro del filtro
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "ignored-password",
                 Collections.singletonList(new SimpleGrantedAuthority(role)));
-        when(customUserDetailsService.loadUserByUsername(username)).thenReturn(userDetails);
+        when(userService.loadUserByUsername(username)).thenReturn(userDetails);
 
         // Act: pasa por el filtro
         jwtRequestFilter.doFilter(request, response, filterChain);

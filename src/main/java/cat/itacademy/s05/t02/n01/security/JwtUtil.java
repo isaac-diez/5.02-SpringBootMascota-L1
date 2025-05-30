@@ -5,8 +5,6 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -20,16 +18,6 @@ public class JwtUtil {
     public JwtUtil() {
     }
 
-//    public String generateToken(String username, List<Role> roles) {
-//        return Jwts.builder()
-//                .setSubject(username)
-//                .claim("roles", roles)
-//                .setIssuedAt(new Date())
-//                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
-//                .signWith(key)
-//                .compact();
-//    }
-
     public String generateToken(String username, String role) {
         String token= Jwts.builder()
                 .setSubject(username)
@@ -38,11 +26,6 @@ public class JwtUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1h
                 .signWith(key)
                 .compact();
-
-//        Claims claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-//
-//        log.info("Generated JWT Token: {}", token);
-//        log.info("Token Claims: {}", claims);
 
         return token;
     }

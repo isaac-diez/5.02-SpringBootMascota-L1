@@ -4,10 +4,10 @@ import cat.itacademy.s05.t02.n01.Repo.UserRepo;
 import cat.itacademy.s05.t02.n01.dto.LoginRequest;
 import cat.itacademy.s05.t02.n01.dto.LoginResponse;
 import cat.itacademy.s05.t02.n01.security.JwtUtil;
-import cat.itacademy.s05.t02.n01.service.CustomUserDetailsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.AuthenticationException;
@@ -21,36 +21,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-//    private final JwtUtil jwtUtil;
-//
-//    @Autowired
-//    private UserService userService;
-//
-//    public AuthController(JwtUtil jwtUtil) {
-//        this.jwtUtil = jwtUtil;
-//    }
-//
-//    @PostMapping("/login")
-//    public ResponseEntity<?> login(@RequestParam String username, @RequestParam String password) {
-//        User user = (User) userService.loadUserByUsername(username);
-//        if (user != null && user.getPassword().equals(password)) {
-//            String token = jwtUtil.generateToken(user.getUsername(), user.getRoles());
-//            return ResponseEntity.ok(Map.of("token", token));
-//        }
-//        return ResponseEntity.status(401).body("Invalid credentials");
-//    }
 
     @Autowired
     private AuthenticationManager authenticationManager;
 
     @Autowired
     JwtUtil jwtUtil;
-
-    @Autowired
-    private UserRepo userRepo;
-
-//    @Autowired
-//    private CustomUserDetailsService customUserDetailsService;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -60,24 +36,35 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
-
+        try {
             var authToken = new UsernamePasswordAuthenticationToken(
                     request.getUsername(), request.getPassword());
+            log.info("Attempting to authenticate user: {} with token: {}", request.getUsername(), authToken);
 
             authenticationManager.authenticate(authToken);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+            log.info("Authentication successful for user: {}", request.getUsername());
 
+            UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
             String role = userDetails.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .findFirst()
-                    .orElseThrow(() -> new RuntimeException("User has no roles assigned"));
-
-            String token = jwtUtil.generateToken(request.getUsername(),role);
-
-            log.info("JWT Token generated: {}", token);
-
+                    .orElseThrow(() -> new RuntimeException("User has no roles assigned. User: " + request.getUsername()));
+            String token = jwtUtil.generateToken(request.getUsername(), role);
+            log.info("JWT Token generated for user: {}", request.getUsername());
             return ResponseEntity.ok(new LoginResponse(token));
 
+        } catch (AuthenticationException e) {
+
+            log.warn("Authentication failed for user {}: {} - {}",
+                    request.getUsername(), e.getClass().getSimpleName(), e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Unexpected error during login for user {}: {} - {}",
+                    request.getUsername(), e.getClass().getSimpleName(), e.getMessage(), e);
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new LoginResponse("Error interno durante el login: " + e.getMessage()));
+        }
     }
 }

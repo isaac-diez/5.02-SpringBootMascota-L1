@@ -9,7 +9,7 @@ public class PetMapper {
 
     public PetDTO toDto(Pet pet) {
         PetDTO dto = new PetDTO();
-        dto.setId(pet.getPet_id());
+        dto.setId(pet.getPetId());
         dto.setPetName(pet.getName());
         dto.setPetType(pet.getType());
 //        dto.setHappyLevel(pet.getLevels().getHappyLevel());
