@@ -92,6 +92,10 @@ class AuthControllerTest_NEW {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
 
+        String testRequestURI = "/user/some_protected_endpoint";
+        when(request.getRequestURI()).thenReturn(testRequestURI);
+        when(request.getServletPath()).thenReturn(testRequestURI);
+
         ServletResponse response = mock(HttpServletResponse.class);
         FilterChain filterChain = mock(FilterChain.class);
 
