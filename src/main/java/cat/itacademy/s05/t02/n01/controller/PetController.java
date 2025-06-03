@@ -26,7 +26,7 @@ public class PetController {
     @Autowired
     private PetMapper petMapper;
 
-    @PostMapping
+    @PostMapping("/new")
     public ResponseEntity<PetDTO> createPet(
             @RequestHeader("userId") int userId,
             @Valid @RequestBody PetDTO petDto) {
