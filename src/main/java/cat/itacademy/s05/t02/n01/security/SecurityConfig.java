@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
                                 "/api-docs/**",
+                                "/login.html",
                                 "/test"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
@@ -77,6 +78,7 @@ public class SecurityConfig {
                 "/v3/api-docs/**",
                 "/swagger-ui.html",
                 "/api-docs/**",
+                "/login.html",
                 "/test"
                 // Puedes añadir otros paths de recursos estáticos aquí si es necesario
         );
