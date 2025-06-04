@@ -9,10 +9,12 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -56,20 +58,31 @@ class UserServiceTest {
     @Test
     void testCreateNewUser() {
 
-        User user = new User();
-        user.setUsername("TestCreateUser");
-        user.setPassword("1234");
-        user.setRole("USER");
+        String userName = "TestCreateUser";
+        String rawPassword = "1234";
 
-        userService.createUser(user.getUsername(),user.getPassword(),user.getRole());
+        User expectedUserFromDB = new User();
+        expectedUserFromDB.setUsername(userName);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(rawPassword);
+        expectedUserFromDB.setPassword(encodedPassword);
+        expectedUserFromDB.setRole("USER");
 
-        when(userRepo.findByUsername("TestCreateUser")).thenReturn(Optional.of(user));
+        when(userRepo.save(any(User.class))).thenReturn(expectedUserFromDB);
 
-        UserDetails userDetails = userService.loadUserByUsername("TestCreateUser");
+        User createdUser = userService.createUser(userName, rawPassword);
 
-        assertEquals("TestCreateUser", userDetails.getUsername());
-        assertEquals("1234", userDetails.getPassword());
+        assertNotNull(createdUser);
+        assertTrue(encoder.matches(rawPassword,createdUser.getPassword()));
+        assertEquals("USER", createdUser.getRole());
+
+        when(userRepo.findByUsername(userName)).thenReturn(Optional.of(expectedUserFromDB));
+
+        UserDetails userDetails = userService.loadUserByUsername(userName);
+
+        assertEquals(userName, userDetails.getUsername());
+        assertEquals(encodedPassword, userDetails.getPassword());
         assertTrue(userDetails.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER")));
-    }
+                        .anyMatch(auth -> auth.getAuthority().equals("ROLE_USER")),
+                "La autoridad ROLE_USER no fue encontrada. Autoridades: " + userDetails.getAuthorities());    }
 }
