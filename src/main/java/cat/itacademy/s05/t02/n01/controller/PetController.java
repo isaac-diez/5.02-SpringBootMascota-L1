@@ -6,6 +6,7 @@ import cat.itacademy.s05.t02.n01.model.User;
 import cat.itacademy.s05.t02.n01.service.PetService;
 import cat.itacademy.s05.t02.n01.service.UserService;
 import cat.itacademy.s05.t02.n01.service.impl.PetMapper;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/pets")
+@SecurityRequirement(name = "bearerAuth")
 public class PetController {
 
     @Autowired
