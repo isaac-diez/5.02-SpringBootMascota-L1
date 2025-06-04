@@ -43,7 +43,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 new AntPathRequestMatcher("/v3/api-docs/**"),
                 new AntPathRequestMatcher("/swagger-ui/**"),
                 new AntPathRequestMatcher("/swagger-ui.html"),
-                new AntPathRequestMatcher("/api-docs/**")
+                new AntPathRequestMatcher("/api-docs/**"),
+                new AntPathRequestMatcher("/login.html"),
+                new AntPathRequestMatcher("/register.html"),
+                new AntPathRequestMatcher("/test")
         );
     }
 
