@@ -48,7 +48,24 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
     }
 
-    public User createUser(String username, String rawPassword, String role) {
+    public User createUser(String username, String rawPassword) {
+
+        if (userRepo.findByUsername(username).isPresent()) {
+            throw new UsernameAlreadyInDataBaseException("Username " + username + " already exists.");
+        }
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String encodedPassword = encoder.encode(rawPassword);
+
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(encodedPassword);
+        user.setRole("USER");
+
+        return userRepo.save(user);
+    }
+
+    public User createUserWithRole(String username, String rawPassword, String role) {
 
         if (userRepo.findByUsername(username).isPresent()) {
             throw new UsernameAlreadyInDataBaseException("Username " + username + " already exists.");
