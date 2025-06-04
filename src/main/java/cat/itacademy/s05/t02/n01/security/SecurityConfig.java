@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login",
+                                "/user/new",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
@@ -78,10 +79,7 @@ public class SecurityConfig {
                 "/swagger-ui/**",
                 "/v3/api-docs/**",
                 "/swagger-ui.html",
-                "/api-docs/**",
-                "/login.html",
-                "/register.html",
-                "/test"
+                "/api-docs/**"
                 // Puedes añadir otros paths de recursos estáticos aquí si es necesario
         );
     }

@@ -40,6 +40,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         this.publicUrls = new OrRequestMatcher(
                 new AntPathRequestMatcher("/auth/login"),
+                new AntPathRequestMatcher("/user/new"),
                 new AntPathRequestMatcher("/v3/api-docs/**"),
                 new AntPathRequestMatcher("/swagger-ui/**"),
                 new AntPathRequestMatcher("/swagger-ui.html"),
