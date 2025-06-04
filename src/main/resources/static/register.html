@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login JWT</title>
+</head>
+<body>
+<h2>Register</h2>
+<form id="register-form">
+    <label>Username: <input type="text" id="username" required></label><br>
+    <label>Password: <input type="password" id="password" required></label><br>
+    <button type="submit">Register</button>
+</form>
+
+<p id="message"></p>
+
+<script>
+    document.getElementById('register-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        try {
+        const response = await fetch('/user/new', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById('message').innerText = 'Register successful!';
+            } else {
+                document.getElementById('message').innerText = 'Register failed: ' + result;
+            }
+        } catch (err) {
+            document.getElementById('message').innerText = 'Error: ' + err.message;
+        }
+    });
+</script>
+</body>
+</html>
