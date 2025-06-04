@@ -1,6 +1,7 @@
 package cat.itacademy.s05.t02.n01.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,13 +25,20 @@ public class Pet {
     private Integer petId;
 
     private String name;
+
+    @Enumerated(EnumType.STRING)
     private PetType type;
 
     @Embedded
     private Level levels = new Level();
 
+    @Enumerated(EnumType.STRING)
     private HealthState healthState;
+
+    @Enumerated(EnumType.STRING)
     private HappinessState happinessState;
+
+    @Enumerated(EnumType.STRING)
     private EvolutionState evolutionState;
 
     private LocalDateTime dob;
@@ -41,10 +49,11 @@ public class Pet {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
+    @JsonBackReference("user-pets")
     private User user;
 
     @OneToMany(mappedBy = "pet", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonBackReference
+    @JsonManagedReference("pet-events")
     private List<Event> eventList;
 
 

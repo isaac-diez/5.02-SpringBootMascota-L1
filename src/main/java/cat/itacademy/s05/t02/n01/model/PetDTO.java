@@ -1,5 +1,6 @@
 package cat.itacademy.s05.t02.n01.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -19,8 +20,9 @@ public class PetDTO implements Serializable {
     @NotNull(message = "El tipo de mascota es obligatorio")
     private PetType petType;
 
+    @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "ID autogenerado de la mascota, solo presente en respuestas.")
     private Integer id;
-    private int happyLevel;
-    private EvolutionState evolutionState;
+//    private int happyLevel;
+//    private EvolutionState evolutionState;
 
 }

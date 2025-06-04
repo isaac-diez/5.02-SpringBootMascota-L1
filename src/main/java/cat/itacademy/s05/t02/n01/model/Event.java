@@ -1,5 +1,7 @@
 package cat.itacademy.s05.t02.n01.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,7 +21,8 @@ public class Event {
         private LocalDateTime date;
 
         @ManyToOne
-        @JoinColumn(name = "id_pet")
+        @JoinColumn(name = "pet_id")
+        @JsonBackReference("pet-events")
         private Pet pet;
 
         public Event(EventType type) {
