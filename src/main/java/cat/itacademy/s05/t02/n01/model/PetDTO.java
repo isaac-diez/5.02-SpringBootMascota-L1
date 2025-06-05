@@ -22,7 +22,8 @@ public class PetDTO implements Serializable {
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "ID autogenerado de la mascota, solo presente en respuestas.")
     private Integer id;
-//    private int happyLevel;
-//    private EvolutionState evolutionState;
+    private int happyLevel;
+    private EvolutionState evolutionState;
+    private String username;
 
 }

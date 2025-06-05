@@ -14,8 +14,9 @@ public class PetMapper {
         }
         dto.setPetName(pet.getName());
         dto.setPetType(pet.getType());
-//        dto.setHappyLevel(pet.getLevels().getHappyLevel());
-//        dto.setEvolutionState(pet.getEvolutionState());
+        dto.setHappyLevel(pet.getLevels().getHappy());
+        dto.setEvolutionState(pet.getEvolutionState());
+        dto.setUsername(pet.getUser().getUsername());
         return dto;
     }
 

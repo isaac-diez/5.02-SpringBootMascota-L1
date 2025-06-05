@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pet")
@@ -78,12 +79,15 @@ public class PetController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<Pet>> getAllPets() {
+    public ResponseEntity<List<PetDTO>> getAllPets() {
         List<Pet> petList = petService.getAllPets();
         if (petList.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.ok(petList);
+            List<PetDTO> petDTOList = petList.stream()
+                    .map(petMapper::toDto)
+                    .toList();
+            return ResponseEntity.ok(petDTOList);
         }
     }
 
