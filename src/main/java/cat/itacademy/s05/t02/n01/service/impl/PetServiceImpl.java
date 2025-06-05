@@ -1,6 +1,7 @@
 package cat.itacademy.s05.t02.n01.service.impl;
 
 import cat.itacademy.s05.t02.n01.Repo.PetRepo;
+import cat.itacademy.s05.t02.n01.exception.EmptyPetListException;
 import cat.itacademy.s05.t02.n01.exception.PetNotFoundException;
 import cat.itacademy.s05.t02.n01.model.*;
 import cat.itacademy.s05.t02.n01.security.JwtRequestFilter;
@@ -13,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -89,6 +91,16 @@ public class PetServiceImpl implements PetService {
             }
         }
         return petOptional;
+    }
+
+    @Override
+    public List<Pet> getAllPets() {
+
+        List<Pet> allPets = petRepo.findAll();
+        if (allPets.isEmpty())
+            throw new EmptyPetListException("No pets in the DB.");
+        return petRepo.findAll();
+
     }
 
 }

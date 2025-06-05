@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -75,5 +77,14 @@ public class PetController {
         }
     }
 
+    @GetMapping("/getAll")
+    public ResponseEntity<List<Pet>> getAllPets() {
+        List<Pet> petList = petService.getAllPets();
+        if (petList.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(petList);
+        }
+    }
 
 }
