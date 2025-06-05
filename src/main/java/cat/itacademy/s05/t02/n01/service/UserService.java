@@ -2,6 +2,7 @@ package cat.itacademy.s05.t02.n01.service;
 
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
 import cat.itacademy.s05.t02.n01.exception.*;
+import cat.itacademy.s05.t02.n01.model.Pet;
 import cat.itacademy.s05.t02.n01.model.User;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -80,5 +81,12 @@ public class UserService implements UserDetailsService {
         user.setRole(role);
 
         return userRepo.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        List<User> allUsers = userRepo.findAll();
+        if (allUsers.isEmpty())
+            throw new EmptyUserListException("No users in the DB.");
+        return userRepo.findAll();
     }
 }
