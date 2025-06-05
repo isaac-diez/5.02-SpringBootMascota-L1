@@ -14,9 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 // Tus importaciones de modelo, repo, DTO, etc.
 import cat.itacademy.s05.t02.n01.model.User;
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
-import cat.itacademy.s05.t02.n01.model.Pet;
 import cat.itacademy.s05.t02.n01.Repo.PetRepo;
-import cat.itacademy.s05.t02.n01.model.PetDTO;
+import cat.itacademy.s05.t02.n01.dto.PetDto;
 import cat.itacademy.s05.t02.n01.model.PetType;
 // Importa ObjectMapper para convertir objetos a JSON
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,7 +85,7 @@ class PetControllerIntegrationTest { // Renombrado para claridad
         // ---- PARTE 1: Crear la Mascota (a través del endpoint de PetController) ----
 
         // PetDTO para la creación
-        PetDTO petDtoToCreate = new PetDTO();
+        PetDto petDtoToCreate = new PetDto();
         petDtoToCreate.setPetName("IntegrationRex");
         petDtoToCreate.setPetType(PetType.TAMAGOTCHI);
 
@@ -111,7 +110,7 @@ class PetControllerIntegrationTest { // Renombrado para claridad
         // (Si tu PetDTO devuelto tiene un campo 'id' o similar, o si devuelves Pet)
         // Necesitas extraer el ID de la mascota creada de 'createPetResponse'.
         // Por ejemplo, si devuelves el Pet completo con su ID:
-        PetDTO createdPet = objectMapper.readValue(createPetResponse, PetDTO.class);
+        PetDto createdPet = objectMapper.readValue(createPetResponse, PetDto.class);
         Integer createdPetId = createdPet.getId(); // Asegúrate de que Pet tiene getPetId()
 
         assertNotNull(createdPetId, "El ID de la mascota creada no debería ser nulo");

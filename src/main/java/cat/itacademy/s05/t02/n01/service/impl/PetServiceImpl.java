@@ -1,16 +1,15 @@
 package cat.itacademy.s05.t02.n01.service.impl;
 
 import cat.itacademy.s05.t02.n01.Repo.PetRepo;
+import cat.itacademy.s05.t02.n01.dto.PetDto;
 import cat.itacademy.s05.t02.n01.exception.EmptyPetListException;
 import cat.itacademy.s05.t02.n01.exception.PetNotFoundException;
 import cat.itacademy.s05.t02.n01.model.*;
-import cat.itacademy.s05.t02.n01.security.JwtRequestFilter;
 import cat.itacademy.s05.t02.n01.service.PetService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -45,7 +44,7 @@ public class PetServiceImpl implements PetService {
         // Otras verificaciones...
     }
 
-    public Pet createPet(User user, PetDTO petDto) {
+    public Pet createPet(User user, PetDto petDto) {
 
         if (user == null || petDto == null) {
             throw new IllegalArgumentException("User and PetDTO can't be null");

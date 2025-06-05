@@ -2,6 +2,7 @@ package cat.itacademy.s05.t02.n01.service.impl;
 
 import cat.itacademy.s05.t02.n01.Repo.PetRepo;
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
+import cat.itacademy.s05.t02.n01.dto.PetDto;
 import cat.itacademy.s05.t02.n01.model.*;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -43,7 +44,7 @@ class PetServiceImplTest {
         mockUser.setId_user(1);
         mockUser.setUsername("isaac");
 
-        PetDTO mockDto = new PetDTO();
+        PetDto mockDto = new PetDto();
         mockDto.setPetName("Max");
         mockDto.setPetType(PetType.TAMAGOTCHI);
 
@@ -68,7 +69,7 @@ class PetServiceImplTest {
         User user = userRepo.findByUsername("isaac")
                 .orElseThrow(() -> new UsernameNotFoundException("User isaac not found in DB"));
 
-        PetDTO mockDto = new PetDTO();
+        PetDto mockDto = new PetDto();
         mockDto.setPetName("Max");
         mockDto.setPetType(PetType.TAMAGOTCHI);
 
@@ -99,7 +100,7 @@ class PetServiceImplTest {
         testUser.setRole("USER");
 
         // 2. Prepara el PetDTO para la creación
-        PetDTO petDtoToCreate = new PetDTO();
+        PetDto petDtoToCreate = new PetDto();
         petDtoToCreate.setPetName("FirulaisConID");
         petDtoToCreate.setPetType(PetType.ANIMAL);
 

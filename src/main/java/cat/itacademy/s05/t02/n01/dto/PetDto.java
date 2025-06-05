@@ -1,5 +1,7 @@
-package cat.itacademy.s05.t02.n01.model;
+package cat.itacademy.s05.t02.n01.dto;
 
+import cat.itacademy.s05.t02.n01.model.EvolutionState;
+import cat.itacademy.s05.t02.n01.model.PetType;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +13,7 @@ import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
-public class PetDTO implements Serializable {
+public class PetDto implements Serializable {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 50, message = "El nombre no puede exceder 50 caracteres")

@@ -1,14 +1,14 @@
 package cat.itacademy.s05.t02.n01.service.impl;
 
 import cat.itacademy.s05.t02.n01.model.Pet;
-import cat.itacademy.s05.t02.n01.model.PetDTO;
+import cat.itacademy.s05.t02.n01.dto.PetDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class PetMapper {
 
-    public PetDTO toDto(Pet pet) {
-        PetDTO dto = new PetDTO();
+    public PetDto toDto(Pet pet) {
+        PetDto dto = new PetDto();
         if (pet.getPetId() != null) {
             dto.setId(pet.getPetId());
         }
@@ -20,7 +20,7 @@ public class PetMapper {
         return dto;
     }
 
-    public Pet fromDto(PetDTO dto) {
+    public Pet fromDto(PetDto dto) {
         Pet pet = new Pet();
         pet.setName(dto.getPetName());
         pet.setType(dto.getPetType());

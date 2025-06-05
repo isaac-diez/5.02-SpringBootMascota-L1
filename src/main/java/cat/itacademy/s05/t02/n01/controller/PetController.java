@@ -1,6 +1,7 @@
 package cat.itacademy.s05.t02.n01.controller;
 
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
+import cat.itacademy.s05.t02.n01.dto.PetDto;
 import cat.itacademy.s05.t02.n01.dto.PetResponseDto;
 import cat.itacademy.s05.t02.n01.model.*;
 import cat.itacademy.s05.t02.n01.service.PetService;
@@ -18,10 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pet")
@@ -44,8 +43,8 @@ public class PetController {
     private UserRepo userRepo;
 
     @PostMapping("/new")
-    public ResponseEntity<PetDTO> createPet(
-            @Valid @RequestBody PetDTO petDto,
+    public ResponseEntity<PetDto> createPet(
+            @Valid @RequestBody PetDto petDto,
             Principal principal) { // Spring inyectará el Principal si el usuario está autenticado
 
         String username = principal.getName();
@@ -53,7 +52,7 @@ public class PetController {
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
         Pet createdPet = petService.createPet(user, petDto); // petService.createPet ya acepta un User
-        PetDTO responseDto = petMapper.toDto(createdPet);
+        PetDto responseDto = petMapper.toDto(createdPet);
         return ResponseEntity.created(URI.create("/pet/" + createdPet.getPetId()))
                 .body(responseDto);
     }
@@ -79,15 +78,15 @@ public class PetController {
     }
 
     @GetMapping("/getAll")
-    public ResponseEntity<List<PetDTO>> getAllPets() {
+    public ResponseEntity<List<PetDto>> getAllPets() {
         List<Pet> petList = petService.getAllPets();
         if (petList.isEmpty()) {
             return ResponseEntity.noContent().build();
         } else {
-            List<PetDTO> petDTOList = petList.stream()
+            List<PetDto> petDtoList = petList.stream()
                     .map(petMapper::toDto)
                     .toList();
-            return ResponseEntity.ok(petDTOList);
+            return ResponseEntity.ok(petDtoList);
         }
     }
 
