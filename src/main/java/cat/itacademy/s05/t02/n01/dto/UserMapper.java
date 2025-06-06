@@ -1,6 +1,5 @@
-package cat.itacademy.s05.t02.n01.service.impl;
+package cat.itacademy.s05.t02.n01.dto;
 
-import cat.itacademy.s05.t02.n01.dto.UserDto;
 import cat.itacademy.s05.t02.n01.model.User;
 import org.springframework.stereotype.Component;
 

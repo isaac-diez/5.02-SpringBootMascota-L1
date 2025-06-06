@@ -1,7 +1,6 @@
-package cat.itacademy.s05.t02.n01.service.impl;
+package cat.itacademy.s05.t02.n01.dto;
 
 import cat.itacademy.s05.t02.n01.model.Pet;
-import cat.itacademy.s05.t02.n01.dto.PetDto;
 import org.springframework.stereotype.Component;
 
 @Component
