@@ -12,4 +12,5 @@ public interface PetService {
     public Pet createPet(User user, PetDto petDto);
     public Optional<Pet> getPetById(int id_pet);
     public List<Pet> getAllPets();
+    public Optional<Pet> play(int idPet);
 }
