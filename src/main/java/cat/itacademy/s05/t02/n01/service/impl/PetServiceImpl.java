@@ -6,6 +6,7 @@ import cat.itacademy.s05.t02.n01.exception.EmptyPetListException;
 import cat.itacademy.s05.t02.n01.exception.PetNotFoundException;
 import cat.itacademy.s05.t02.n01.model.*;
 import cat.itacademy.s05.t02.n01.service.PetService;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,24 +26,45 @@ public class PetServiceImpl implements PetService {
     @Autowired
     private PetRepo petRepo;
 
-    @Scheduled(fixedRate = 300000) // Cada 5 minutos
-    public void updateLevels(int petId) {
-        Pet pet = petRepo.findById(petId)
-                .orElseThrow(() -> new PetNotFoundException("Pet nof found in DB " + petId));
+    @Scheduled(fixedRate = 5000)
+    @Transactional
+    public void updateAllPetsPassiveStates() {
+        log.info("Ejecutando tarea programada: Actualizando estados pasivos de las mascotas...");
 
-        // Lógica de degradación natural
-        pet.updateNeeds();
-        verificarConsecuencias(pet);
+        // 1. Obtener todas las mascotas que necesitan ser actualizadas.
+        //    Para empezar, podemos obtener todas las que no estén muertas.
+        List<Pet> activePets = petRepo.findAllByEvolutionStateNot(EvolutionState.DEAD);
 
-        petRepo.save(pet);
+        if (activePets.isEmpty()) {
+            log.info("No hay mascotas activas para actualizar.");
+            return;
+        }
+
+        // 2. Iterar sobre cada mascota y aplicar la lógica de degradación.
+        for (Pet pet : activePets) {
+            try {
+                log.trace("Actualizando mascota con ID: {}", pet.getPetId());
+
+                // La lógica que ya tienes, ahora aplicada a cada mascota en el bucle.
+                pet.updateNeeds();         // Degrada los niveles (hambre, energía, etc.).
+                pet.updateDerivedStates(); // Actualiza los enums (HappinessState, HealthState, etc.).
+
+                // 3. Guardar la mascota actualizada.
+                //    Como el method es @Transactional, los cambios en las entidades gestionadas
+                //    podrían guardarse al final de la transacción sin una llamada explícita a save().
+                //    Sin embargo, llamar a save() es más explícito y no hace daño.
+                petRepo.save(pet);
+
+            } catch (Exception e) {
+                // Captura de errores para una mascota específica para no detener todo el proceso.
+                log.error("Error al actualizar la mascota con ID {}: {}", pet.getPetId(), e.getMessage());
+            }
+        }
+
+        log.info("Tarea de actualización de mascotas completada. Mascotas procesadas: {}", activePets.size());
     }
 
-    private void verificarConsecuencias(Pet pet) {
-//        if (pet.getLevels().getHungryLevel() > 90) {
-//            pet.aplicarEfecto(new EfectoDesnutricion());
-//        }
-        // Otras verificaciones...
-    }
+
 
     public Pet createPet(User user, PetDto petDto) {
 
@@ -99,6 +121,24 @@ public class PetServiceImpl implements PetService {
         if (allPets.isEmpty())
             throw new EmptyPetListException("No pets in the DB.");
         return petRepo.findAll();
+
+    }
+
+    @Override
+    public Optional<Pet> play(int id_pet) {
+        Optional<Pet> petOptional = getPetById(id_pet);
+        Pet pet = new Pet();
+        if (petOptional.isPresent()) {
+            pet = petOptional.get();
+        } else {
+            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
+        }
+
+        pet.applyPlayingEffects();
+
+        petRepo.save(pet);
+
+        return petRepo.findById(id_pet);
 
     }
 
