@@ -6,7 +6,7 @@ import cat.itacademy.s05.t02.n01.dto.PetResponseDto;
 import cat.itacademy.s05.t02.n01.model.*;
 import cat.itacademy.s05.t02.n01.service.PetService;
 import cat.itacademy.s05.t02.n01.service.UserService;
-import cat.itacademy.s05.t02.n01.service.impl.PetMapper;
+import cat.itacademy.s05.t02.n01.dto.PetMapper;
 import cat.itacademy.s05.t02.n01.service.impl.PetServiceImpl;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -87,6 +87,18 @@ public class PetController {
                     .map(petMapper::toDto)
                     .toList();
             return ResponseEntity.ok(petDtoList);
+        }
+    }
+
+    @GetMapping("/play")
+    public ResponseEntity<Pet> playWithPet(@PathVariable int id_pet) {
+        log.info("PetController: Attempting to get pet with id_pet: {}", id_pet);
+        Optional<Pet> petOptional = petService.play(id_pet);
+        if (petOptional.isPresent()) {
+            Pet pet = petOptional.get();
+            return ResponseEntity.ok(pet);
+        } else {
+            return ResponseEntity.notFound().build();
         }
     }
 
