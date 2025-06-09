@@ -284,6 +284,8 @@ public class Pet {
         this.levels.energy = Math.min(100, this.levels.energy + 50);
         this.levels.hygiene = Math.max(0, this.levels.hygiene - 10);
 
+        this.isSleeping = true;
+
         this.lastSleptTime = LocalDateTime.now();
     }
 
@@ -338,7 +340,7 @@ public class Pet {
         int hungryLevel = this.levels.getHungry();
 
         if (this.evolutionState == EvolutionState.DEAD) {
-            this.healthState = HealthState.DECEASED;
+            this.healthState = HealthState.DEAD;
             return;
         }
 
@@ -396,12 +398,13 @@ public class Pet {
             this.levels.setHungry(0);
             this.levels.setEnergy(0);
             this.levels.setHappy(0);
+            this.levels.setHygiene(0);
             this.isSleeping = false;
 
         }
     }
 
     public int getDaysOld() {
-        return this.daysOld = Math.toIntExact(ChronoUnit.DAYS.between(this.dob, LocalDateTime.now()));
+        return this.daysOld = Math.toIntExact(ChronoUnit.HOURS.between(this.dob, LocalDateTime.now()));
     }
 }
