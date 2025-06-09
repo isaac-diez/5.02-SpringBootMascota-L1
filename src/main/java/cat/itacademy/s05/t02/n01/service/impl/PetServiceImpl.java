@@ -178,4 +178,21 @@ public class PetServiceImpl implements PetService {
 
     }
 
+    @Override
+    public Optional<Pet> giveMeds(int id_pet) {
+        Optional<Pet> petOptional = getPetById(id_pet);
+        Pet pet = new Pet();
+        if (petOptional.isPresent()) {
+            pet = petOptional.get();
+        } else {
+            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
+        }
+
+        pet.applyMedicineEffects();
+
+        petRepo.save(pet);
+
+        return petRepo.findById(id_pet);
+    }
+
 }

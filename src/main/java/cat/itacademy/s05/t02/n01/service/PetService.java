@@ -15,4 +15,5 @@ public interface PetService {
     public Optional<Pet> play(int idPet);
     public Optional<Pet> feed(int idPet);
     public Optional<Pet> sleep(int idPet);
+    public Optional<Pet> giveMeds(int idPet);
 }
