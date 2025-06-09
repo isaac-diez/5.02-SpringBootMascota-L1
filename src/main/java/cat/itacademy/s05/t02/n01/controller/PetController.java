@@ -114,4 +114,16 @@ public class PetController {
         }
     }
 
+    @PostMapping("/sleep/{id_pet}")
+    public ResponseEntity<Pet> sleepPet(@PathVariable int id_pet) {
+        log.info("PetController: Attempting to get pet to sleep with id_pet: {}", id_pet);
+        Optional<Pet> petOptional = petService.sleep(id_pet);
+        if (petOptional.isPresent()) {
+            Pet pet = petOptional.get();
+            return ResponseEntity.ok(pet);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

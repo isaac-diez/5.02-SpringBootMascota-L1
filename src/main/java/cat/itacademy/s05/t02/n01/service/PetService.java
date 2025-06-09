@@ -14,4 +14,5 @@ public interface PetService {
     public List<Pet> getAllPets();
     public Optional<Pet> play(int idPet);
     public Optional<Pet> feed(int idPet);
+    public Optional<Pet> sleep(int idPet);
 }
