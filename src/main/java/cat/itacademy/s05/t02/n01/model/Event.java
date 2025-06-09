@@ -25,7 +25,8 @@ public class Event {
         @JsonBackReference("pet-events")
         private Pet pet;
 
-        public Event(EventType type) {
+        public Event(EventType type, LocalDateTime date) {
                 this.type = type;
+                this.date = date;
         }
 }
