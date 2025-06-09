@@ -90,10 +90,22 @@ public class PetController {
         }
     }
 
-    @GetMapping("/play")
+    @PostMapping("/play/{id_pet}")
     public ResponseEntity<Pet> playWithPet(@PathVariable int id_pet) {
-        log.info("PetController: Attempting to get pet with id_pet: {}", id_pet);
+        log.info("PetController: Attempting to get pet to play with id_pet: {}", id_pet);
         Optional<Pet> petOptional = petService.play(id_pet);
+        if (petOptional.isPresent()) {
+            Pet pet = petOptional.get();
+            return ResponseEntity.ok(pet);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PostMapping("/feed/{id_pet}")
+    public ResponseEntity<Pet> feedPet(@PathVariable int id_pet) {
+        log.info("PetController: Attempting to get pet to feed with id_pet: {}", id_pet);
+        Optional<Pet> petOptional = petService.feed(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
             return ResponseEntity.ok(pet);

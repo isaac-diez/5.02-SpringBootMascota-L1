@@ -26,7 +26,7 @@ public class PetServiceImpl implements PetService {
     @Autowired
     private PetRepo petRepo;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 10000)
     @Transactional
     public void updateAllPetsPassiveStates() {
         log.info("Ejecutando tarea programada: Actualizando estados pasivos de las mascotas...");
@@ -135,6 +135,24 @@ public class PetServiceImpl implements PetService {
         }
 
         pet.applyPlayingEffects();
+
+        petRepo.save(pet);
+
+        return petRepo.findById(id_pet);
+
+    }
+
+    @Override
+    public Optional<Pet> feed(int id_pet) {
+        Optional<Pet> petOptional = getPetById(id_pet);
+        Pet pet = new Pet();
+        if (petOptional.isPresent()) {
+            pet = petOptional.get();
+        } else {
+            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
+        }
+
+        pet.applyFeedingEffects();
 
         petRepo.save(pet);
 
