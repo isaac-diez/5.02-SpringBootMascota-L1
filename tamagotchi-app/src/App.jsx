@@ -336,6 +336,7 @@ const PetDisplay = ({ pet }) => {
         ANIMAL: "https://placehold.co/300x300/60a5fa/0c2f53?text=Animal",
         // Imágenes específicas por estado
         SICK: "https://placehold.co/300x300/a1a1aa/44403c?text=Enfermo",
+        DEAD: "https://placehold.co/300x300/a1a1aa/44403c?text=RIP",
         SAD: "https://placehold.co/300x300/a16207/422006?text=Triste",
         MISERABLE: "https://placehold.co/300x300/a16207/422006?text=Muy+Triste",
         HAPPY: "https://placehold.co/300x300/fde047/854d0e?text=Feliz",
@@ -346,6 +347,7 @@ const PetDisplay = ({ pet }) => {
     // Lógica para decidir qué imagen mostrar
     const getPetImage = () => {
         if (pet.healthState === 'SICK') return imageMap.SICK;
+        if (pet.healthState === 'DEAD') return imageMap.DEAD;
         if (pet.happinessState === 'MISERABLE') return imageMap.MISERABLE;
         if (pet.happinessState === 'SAD') return imageMap.SAD;
         if (pet.happinessState === 'EXULTANT') return imageMap.EXULTANT;
@@ -366,29 +368,56 @@ const PetDisplay = ({ pet }) => {
 };
 
 const PetStatBar = ({ label, value, colorClass }) => {
-    const width = Math.max(0, Math.min(100, value)); // Asegura que el valor esté entre 0 y 100
+    const percentage = Math.max(0, Math.min(100, value)); // Ensure value is between 0 and 100
     return (
         <div>
-            <span className="text-sm font-bold text-gray-300">{label}</span>
-            <div className="w-full bg-gray-700 rounded-full h-4 mt-1">
+            <div className="flex justify-between mb-1">
+                <span className="text-base font-medium text-gray-300">{label}</span>
+                <span className="text-sm font-medium text-gray-300">{Math.round(percentage)}%</span>
+            </div>
+            <div className="w-full bg-gray-700 rounded-full h-4">
                 <div
-                    className={`${colorClass} h-4 rounded-full transition-all duration-500 ease-in-out`}
-                    style={{ width: `${width}%` }}
+                    className={`${colorClass} h-4 rounded-full`}
+                    style={{ width: `${percentage}%` }}
                 ></div>
             </div>
         </div>
     );
 };
 
+
 const PetStats = ({ pet }) => {
+    // --- DEBUGGING STEP ---
+    // This log will show you exactly what data the component is receiving and when.
+    // Open your browser's developer console (F12) to see the output.
+    console.log('PetStats component received this pet data:', pet);
+
+    // --- THE FIX (GUARD CLAUSE) ---
+    // If 'pet' or 'pet.levels' doesn't exist yet, we stop here and show a loading state.
+    // This prevents the code below from running with incomplete data and causing errors.
+    if (!pet || !pet.levels) {
+        return (
+            <div className="bg-gray-800 p-6 rounded-lg space-y-4 animate-pulse">
+                <h3 className="text-xl font-bold text-center mb-4 text-gray-400">Loading Stats...</h3>
+                <div className="h-4 bg-gray-700 rounded-full w-full mb-2.5"></div>
+                <div className="h-4 bg-gray-700 rounded-full w-full mb-2.5"></div>
+                <div className="h-4 bg-gray-700 rounded-full w-full mb-2.5"></div>
+                <div className="h-4 bg-gray-700 rounded-full w-full mb-2.5"></div>
+                <div className="h-4 bg-gray-700 rounded-full w-full mb-2.5"></div>
+            </div>
+        );
+    }
+
+    // --- YOUR ORIGINAL CODE ---
+    // This part will now only run when the data is fully loaded.
     return (
         <div className="bg-gray-800 p-6 rounded-lg space-y-4">
-            <h3 className="text-xl font-bold text-center mb-4">Estado de {pet.petName}</h3>
-            <PetStatBar label="Salud" value={pet.levels?.health} colorClass="bg-green-500" />
-            <PetStatBar label="Felicidad" value={pet.levels?.happy} colorClass="bg-yellow-400" />
-            <PetStatBar label="Hambre" value={100 - pet.levels?.hungry} colorClass="bg-orange-500" />
-            <PetStatBar label="Energía" value={pet.levels?.energy} colorClass="bg-blue-500" />
-            <PetStatBar label="Higiene" value={pet.levels?.hygiene} colorClass="bg-cyan-400" />
+            <h3 className="text-xl font-bold text-center mb-4">State of {pet.name}</h3>
+            <PetStatBar label="Health" value={pet.levels.health} colorClass="bg-green-500" />
+            <PetStatBar label="Happiness" value={pet.levels.happy} colorClass="bg-yellow-400" />
+            <PetStatBar label="Hungry" value={pet.levels.hungry} colorClass="bg-orange-500" />
+            <PetStatBar label="Energy" value={pet.levels.energy} colorClass="bg-blue-500" />
+            <PetStatBar label="Hygiene" value={pet.levels.hygiene} colorClass="bg-cyan-400" />
         </div>
     );
 };
