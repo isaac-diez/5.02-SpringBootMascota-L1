@@ -19,6 +19,22 @@ public class PetMapper {
         return dto;
     }
 
+    public PetDetailResponseDto toDetailDto(Pet pet) {
+        if (pet == null) return null;
+        PetDetailResponseDto dto = new PetDetailResponseDto();
+        dto.setPetId(pet.getPetId());
+        dto.setName(pet.getName());
+        dto.setType(pet.getType());
+        dto.setHealthState(pet.getHealthState());
+        dto.setHappinessState(pet.getHappinessState());
+        dto.setEvolutionState(pet.getEvolutionState());
+        dto.setSleeping(pet.isSleeping());
+        dto.setDaysOld(pet.getDaysOld());
+        dto.setDob(pet.getDob());
+        dto.setLevels(pet.getLevels()); // Añade el objeto de niveles completo al DTO
+        return dto;
+    }
+
     public Pet fromDto(PetDto dto) {
         Pet pet = new Pet();
         pet.setName(dto.getPetName());
