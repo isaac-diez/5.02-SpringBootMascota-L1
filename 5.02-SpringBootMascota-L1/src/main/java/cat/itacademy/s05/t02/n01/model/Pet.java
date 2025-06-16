@@ -300,7 +300,7 @@ public class Pet {
         this.levels.hungry = Math.min(100, this.levels.hungry + 10);
         this.levels.happy = Math.min(100, this.levels.happy + 15);
         this.levels.energy = Math.min(100, this.levels.energy + 20);
-        this.levels.hygiene = Math.max(0, this.levels.hygiene + 50);
+        this.levels.hygiene = Math.min(100, this.levels.hygiene + 50);
 
         this.isSleeping = false;
 
