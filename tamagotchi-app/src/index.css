@@ -1,3 +1,93 @@
+/* Import the pixel font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Import base Tailwind styles */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Define the new Tamagotchi-inspired theme
+*/
+@layer base {
+  :root {
+    /* Color Palette from tamagotchi-official.com */
+    --tam-pink: #ff7bac;
+    --tam-yellow: #ffec00;
+    --tam-teal: #00a8a3;
+    --tam-blue: #00b9f2;
+    --tam-purple: #9b58ba;
+    --tam-bg: #fdf6f8; /* Light pinkish background */
+    --tam-dark: #222322; /* For text and borders */
+  }
+
+  body {
+    background-color: var(--tam-bg);
+    /* A simple repeating dot pattern to mimic the site's busy background */
+    background-image: radial-gradient(var(--tam-pink) 1px, transparent 1px);
+    background-size: 15px 15px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: var(--tam-dark);
+  }
+
+  /* Define the pixel font utility class */
+  .font-pixel {
+    font-family: 'Press Start 2P', cursive;
+  }
+}
+
+/* Custom styles for our components
+*/
+@layer components {
+  /* Main content container style */
+  .tamagotchi-container {
+    background-color: white;
+    border: 3px solid var(--tam-dark);
+    border-radius: 1.5rem; /* 24px */
+    padding: 2rem; /* 32px */
+    box-shadow: 8px 8px 0px var(--tam-dark);
+    width: 100%;
+  }
+
+  /* Custom button styles */
+  .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 9999px; /* pill shape */
+    font-weight: bold;
+    color: var(--tam-dark);
+    border: 3px solid var(--tam-dark);
+    box-shadow: 4px 4px 0px var(--tam-dark);
+    transition: all 0.1s ease-in-out;
+  }
+  .btn:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px var(--tam-dark);
+  }
+  .btn:active {
+    transform: translate(4px, 4px);
+    box-shadow: none;
+  }
+  .btn-primary {
+    background-color: var(--tam-yellow);
+  }
+  .btn-secondary {
+    background-color: var(--tam-pink);
+  }
+  .btn-danger {
+    background-color: var(--tam-teal);
+  }
+
+  /* Custom form input style */
+  .tamagotchi-input {
+    width: 100%;
+    padding: 1rem 1rem;
+    background-color: #fff;
+    border: 3px solid var(--tam-dark);
+    border-radius: 0.75rem; /* 12px */
+    color: var(--tam-dark);
+    transition: all 0.2s ease-in-out;
+  }
+  .tamagotchi-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--tam-yellow);
+  }
+}
