@@ -12,6 +12,8 @@ public interface PetService {
     public Pet createPet(User user, PetDto petDto);
     public Optional<Pet> getPetById(int id_pet);
     public List<Pet> getAllPets();
+    List<Pet> getAllPetsByUserId(Integer userId);
+    List<Pet> getAllPetsAsAdmin();
     public Optional<Pet> play(int idPet);
     public Optional<Pet> feed(int idPet);
     public Optional<Pet> sleep(int idPet);
