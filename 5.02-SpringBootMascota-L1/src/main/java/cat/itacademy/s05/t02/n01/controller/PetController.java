@@ -1,6 +1,7 @@
 package cat.itacademy.s05.t02.n01.controller;
 
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
+import cat.itacademy.s05.t02.n01.dto.PetDetailResponseDto;
 import cat.itacademy.s05.t02.n01.dto.PetDto;
 import cat.itacademy.s05.t02.n01.dto.PetResponseDto;
 import cat.itacademy.s05.t02.n01.model.*;
@@ -21,6 +22,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/pet")
@@ -58,22 +60,42 @@ public class PetController {
     }
 
     @GetMapping("/get/{id_pet}")
-    public ResponseEntity<PetResponseDto> getPetById(@PathVariable int id_pet) {
+    public ResponseEntity<PetDetailResponseDto> getPetById(@PathVariable int id_pet) {
         log.info("PetController: Attempting to get pet with id_pet: {}", id_pet);
         Optional<Pet> petOptional = petService.getPetById(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
             // Mapear Pet a PetResponseDTO
-            PetResponseDto dto = new PetResponseDto();
+            PetDetailResponseDto dto = new PetDetailResponseDto();
             dto.setPetId(pet.getPetId());
             dto.setName(pet.getName());
             if (pet.getType() != null) dto.setType(PetType.valueOf(pet.getType().name()));
             if (pet.getEvolutionState() != null) dto.setEvolutionState(EvolutionState.valueOf(pet.getEvolutionState().name()));
-            if (pet.getUser() != null) dto.setUserId(pet.getUser().getId_user());
 
             return ResponseEntity.ok(dto);
         } else {
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/my-pets") // Ruta descriptiva y no conflictiva
+    public ResponseEntity<List<PetDto>> getMyPets(Principal principal) {
+        // Obtenemos el usuario autenticado a partir del token
+        String username = principal.getName();
+        User user = userRepo.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+
+        // Llamamos al servicio para obtener las mascotas de ESE usuario
+        List<Pet> petList = petService.getAllPetsByUserId(user.getId());
+
+        if (petList.isEmpty()) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            // Mapeamos la lista de entidades a una lista de DTOs para la respuesta
+            List<PetDto> petDtoList = petList.stream()
+                    .map(petMapper::toDto)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(petDtoList);
         }
     }
 
@@ -90,49 +112,49 @@ public class PetController {
         }
     }
 
-    @PostMapping("/play/{id_pet}")
-    public ResponseEntity<Pet> playWithPet(@PathVariable int id_pet) {
+    @PostMapping("/{id_pet}/play")
+    public ResponseEntity<PetDetailResponseDto> playWithPet(@PathVariable int id_pet) {
         log.info("PetController: Attempting to get pet to play with id_pet: {}", id_pet);
         Optional<Pet> petOptional = petService.play(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
-            return ResponseEntity.ok(pet);
+            return ResponseEntity.ok(petMapper.toDetailDto(pet));
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping("/feed/{id_pet}")
-    public ResponseEntity<Pet> feedPet(@PathVariable int id_pet) {
+    @PostMapping("/{id_pet}/feed")
+    public ResponseEntity<PetDetailResponseDto> feedPet(@PathVariable int id_pet) {
         log.info("PetController: Attempting to get pet to feed with id_pet: {}", id_pet);
         Optional<Pet> petOptional = petService.feed(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
-            return ResponseEntity.ok(pet);
+            return ResponseEntity.ok(petMapper.toDetailDto(pet));
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping("/sleep/{id_pet}")
-    public ResponseEntity<Pet> getPetToSleep(@PathVariable int id_pet) {
+    @PostMapping("/{id_pet}/sleep")
+    public ResponseEntity<PetDetailResponseDto> getPetToSleep(@PathVariable int id_pet) {
         log.info("PetController: Attempting to get pet to sleep with id_pet: {}", id_pet);
         Optional<Pet> petOptional = petService.sleep(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
-            return ResponseEntity.ok(pet);
+            return ResponseEntity.ok(petMapper.toDetailDto(pet));
         } else {
             return ResponseEntity.notFound().build();
         }
     }
 
-    @PostMapping("/meds/{id_pet}")
-    public ResponseEntity<Pet> giveMedsToPet(@PathVariable int id_pet) {
+    @PostMapping("/{id_pet}/meds")
+    public ResponseEntity<PetDetailResponseDto> giveMedsToPet(@PathVariable int id_pet) {
         log.info("PetController: Attempting to give meds to pet with id_pet: {}", id_pet);
         Optional<Pet> petOptional = petService.giveMeds(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
-            return ResponseEntity.ok(pet);
+            return ResponseEntity.ok(petMapper.toDetailDto(pet));
         } else {
             return ResponseEntity.notFound().build();
         }
