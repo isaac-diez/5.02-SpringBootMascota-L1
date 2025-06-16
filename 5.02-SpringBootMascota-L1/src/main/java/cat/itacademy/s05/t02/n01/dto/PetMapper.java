@@ -31,7 +31,16 @@ public class PetMapper {
         dto.setSleeping(pet.isSleeping());
         dto.setDaysOld(pet.getDaysOld());
         dto.setDob(pet.getDob());
-        dto.setLevels(pet.getLevels()); // Añade el objeto de niveles completo al DTO
+
+        if (pet.getLevels() != null) {
+            LevelDto levelDto = new LevelDto();
+            levelDto.setHungry(pet.getLevels().getHungry());
+            levelDto.setEnergy(pet.getLevels().getEnergy());
+            levelDto.setHappy(pet.getLevels().getHappy());
+            levelDto.setHygiene(pet.getLevels().getHygiene());
+            levelDto.setHealth(pet.getLevels().getHealth());
+            dto.setLevels(levelDto);
+        }
         return dto;
     }
 

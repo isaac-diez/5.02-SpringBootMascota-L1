@@ -17,5 +17,5 @@ public class PetDetailResponseDto {
     private boolean isSleeping;
     private int daysOld;
     private LocalDateTime dob;
-    private Pet.Level levels; // Incluye el objeto Level completo
+    private LevelDto levels;
 }
