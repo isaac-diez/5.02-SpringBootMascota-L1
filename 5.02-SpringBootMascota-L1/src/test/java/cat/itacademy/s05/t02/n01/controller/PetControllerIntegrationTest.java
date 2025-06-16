@@ -126,7 +126,7 @@ class PetControllerIntegrationTest { // Renombrado para claridad
                 .andExpect(jsonPath("$.petId", is(createdPetId)))
                 .andExpect(jsonPath("$.name", is(petDtoToCreate.getPetName())))
                 .andExpect(jsonPath("$.type", is(petDtoToCreate.getPetType().toString()))) // toString() para enums en JSON
-                .andExpect(jsonPath("$.userId", is(testUser.getId_user()))); // Verifica el usuario asociado
+                .andExpect(jsonPath("$.userId", is(testUser.getId()))); // Verifica el usuario asociado
         // Ajusta los jsonPath según la estructura exacta de tu respuesta Pet serializada
     }
 }

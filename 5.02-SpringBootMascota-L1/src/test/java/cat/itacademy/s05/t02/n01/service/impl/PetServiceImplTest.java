@@ -41,7 +41,7 @@ class PetServiceImplTest {
     void createPet_ShouldReturnSavedPet() {
 
         User mockUser = new User();
-        mockUser.setId_user(1);
+        mockUser.setId(1);
         mockUser.setUsername("isaac");
 
         PetDto mockDto = new PetDto();
@@ -95,7 +95,7 @@ class PetServiceImplTest {
 
         // 1. Prepara el User
         User testUser = new User();
-        testUser.setId_user(1);
+        testUser.setId(1);
         testUser.setUsername("testuser_for_pet_id_test");
         testUser.setRole("USER");
 
