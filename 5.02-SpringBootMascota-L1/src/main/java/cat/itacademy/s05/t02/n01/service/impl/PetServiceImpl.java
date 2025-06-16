@@ -26,7 +26,7 @@ public class PetServiceImpl implements PetService {
     @Autowired
     private PetRepo petRepo;
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 300000)
     @Transactional
     public void updateAllPetsPassiveStates() {
         log.info("Ejecutando tarea programada: Actualizando estados pasivos de las mascotas...");
@@ -121,6 +121,16 @@ public class PetServiceImpl implements PetService {
             throw new EmptyPetListException("No pets in the DB.");
         return petRepo.findAll();
 
+    }
+
+    @Override
+    public List<Pet> getAllPetsByUserId(Integer userId) {
+        return petRepo.findAllByUserId(userId);
+    }
+
+    @Override
+    public List<Pet> getAllPetsAsAdmin() {
+        return petRepo.findAll();
     }
 
     @Override
