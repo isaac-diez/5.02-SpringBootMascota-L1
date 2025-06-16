@@ -4,6 +4,7 @@ import cat.itacademy.s05.t02.n01.Repo.PetRepo;
 import cat.itacademy.s05.t02.n01.dto.PetDto;
 import cat.itacademy.s05.t02.n01.exception.EmptyPetListException;
 import cat.itacademy.s05.t02.n01.exception.PetNotFoundException;
+import cat.itacademy.s05.t02.n01.exception.UnauthorizedUserException;
 import cat.itacademy.s05.t02.n01.model.*;
 import cat.itacademy.s05.t02.n01.service.PetService;
 import jakarta.transaction.Transactional;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -90,18 +92,17 @@ public class PetServiceImpl implements PetService {
         initialLevels.setHealth(100);
         pet.setLevels(initialLevels);
 
-        // Guardar en base de datos
         return petRepo.save(pet);
     }
 
     public Optional<Pet> getPetById(int id_pet) {
-        if (id_pet <= 0) { // Mejorado para incluir IDs no positivos
+        if (id_pet <= 0) {
             throw new IllegalArgumentException("The id is invalid: " + id_pet);
         }
         Optional<Pet> petOptional = petRepo.findById(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
-            // Log para inspeccionar
+
             log.info("Pet recuperado: ID={}, EvolutionState={}", pet.getPetId(), pet.getEvolutionState());
             if (pet.getEvolutionState() != null) {
                 log.info("EvolutionState name: {}, EvolutionState ordinal: {}",
@@ -133,23 +134,42 @@ public class PetServiceImpl implements PetService {
         return petRepo.findAll();
     }
 
-    @Override
-    public Optional<Pet> play(int id_pet) {
-        Optional<Pet> petOptional = getPetById(id_pet);
-        Pet pet = new Pet();
-        if (petOptional.isPresent()) {
-            pet = petOptional.get();
-        } else {
-            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
-        }
+//    @Override
+//    public Optional<Pet> play(int id_pet) {
+//        Optional<Pet> petOptional = getPetById(id_pet);
+//        Pet pet = new Pet();
+//        if (petOptional.isPresent()) {
+//            pet = petOptional.get();
+//        } else {
+//            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
+//        }
+//
+//        pet.applyPlayingEffects();
+//        pet.updateDerivedStates();
+//
+//        petRepo.save(pet);
+//
+//        return petRepo.findById(id_pet);
+//
+//    }
 
+    @Override
+    @Transactional
+    public Pet play(Integer petId, Principal principal) {
+        Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applyPlayingEffects();
         pet.updateDerivedStates();
+//        createAndSaveEvent(pet, EventType.PLAY);
+        return petRepo.save(pet);
+    }
 
-        petRepo.save(pet);
-
-        return petRepo.findById(id_pet);
-
+    private Pet getPetAndVerifyOwnership(Integer petId, Principal principal) {
+        Pet pet = petRepo.findById(petId)
+                .orElseThrow(() -> new PetNotFoundException("Mascota con ID " + petId + " no encontrada."));
+        if (!pet.getUser().getUsername().equals(principal.getName())) {
+            throw new UnauthorizedUserException("No tienes permiso para interactuar con esta mascota.");
+        }
+        return pet;
     }
 
     @Override

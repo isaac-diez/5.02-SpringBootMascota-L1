@@ -65,14 +65,13 @@ public class PetController {
         Optional<Pet> petOptional = petService.getPetById(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
-            // Mapear Pet a PetResponseDTO
-            PetDetailResponseDto dto = new PetDetailResponseDto();
-            dto.setPetId(pet.getPetId());
-            dto.setName(pet.getName());
-            if (pet.getType() != null) dto.setType(PetType.valueOf(pet.getType().name()));
-            if (pet.getEvolutionState() != null) dto.setEvolutionState(EvolutionState.valueOf(pet.getEvolutionState().name()));
+//            PetDetailResponseDto dto = new PetDetailResponseDto();
+//            dto.setPetId(pet.getPetId());
+//            dto.setName(pet.getName());
+//            if (pet.getType() != null) dto.setType(PetType.valueOf(pet.getType().name()));
+//            if (pet.getEvolutionState() != null) dto.setEvolutionState(EvolutionState.valueOf(pet.getEvolutionState().name()));
 
-            return ResponseEntity.ok(dto);
+            return ResponseEntity.ok(petMapper.toDetailDto(pet));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -113,16 +112,11 @@ public class PetController {
     }
 
     @PostMapping("/{id_pet}/play")
-    public ResponseEntity<PetDetailResponseDto> playWithPet(@PathVariable int id_pet) {
-        log.info("PetController: Attempting to get pet to play with id_pet: {}", id_pet);
-        Optional<Pet> petOptional = petService.play(id_pet);
-        if (petOptional.isPresent()) {
-            Pet pet = petOptional.get();
-            return ResponseEntity.ok(petMapper.toDetailDto(pet));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<PetDetailResponseDto> playWithPet(@PathVariable int id_pet, Principal principal) {
+        Pet updatedPet = petService.play(id_pet, principal);
+        return ResponseEntity.ok(petMapper.toDetailDto(updatedPet));
     }
+
 
     @PostMapping("/{id_pet}/feed")
     public ResponseEntity<PetDetailResponseDto> feedPet(@PathVariable int id_pet) {
