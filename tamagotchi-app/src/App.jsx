@@ -445,6 +445,7 @@ const PetDetailPage = () => {
         const fetchPetDetails = async () => {
             try {
                 const response = await apiClient.get(`/pet/get/${petId}`);
+                console.log("Datos recibidos del backend:", response.data);
                 setPet(response.data);
             } catch (err) {
                 console.error(`Error al obtener los detalles de la mascota ${petId}:`, err);
