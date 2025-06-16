@@ -1,9 +1,6 @@
 package cat.itacademy.s05.t02.n01.model;
 
-import cat.itacademy.s05.t02.n01.exception.PetNotHungryException;
-import cat.itacademy.s05.t02.n01.exception.PetNotSickException;
-import cat.itacademy.s05.t02.n01.exception.PetNotTiredEnoughException;
-import cat.itacademy.s05.t02.n01.exception.PetTooTiredException;
+import cat.itacademy.s05.t02.n01.exception.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -246,6 +243,8 @@ public class Pet {
             this.levels.happy += 10;
         }
 
+        this.isSleeping = false;
+
         this.lastFedTime = LocalDateTime.now();
     }
 
@@ -259,10 +258,12 @@ public class Pet {
         this.levels.energy = Math.max(0, this.levels.energy - 20);
         this.levels.hygiene = Math.max(0, this.levels.hygiene - 10);
 
+        this.isSleeping = false;
+
         this.lastPlayedTime = LocalDateTime.now();
     }
 
-    public void applyMedicineEffects() {  //Mejora healthState.
+    public void applyMedicineEffects() {
         if (!isSick) {
             throw new PetNotSickException("The pet is not sick");
         }
@@ -271,10 +272,12 @@ public class Pet {
         this.levels.happy = Math.min(100, this.levels.happy + 20);
         this.levels.energy = Math.min(100, this.levels.energy + 20);
 
+        this.isSleeping = false;
+
         this.LastMedGivenTime = LocalDateTime.now();
     }
 
-    public void applySleepEffects() {   // Cambia isSleeping, actualiza lastSleptTime, podría iniciar recuperación de energía.
+    public void applySleepEffects() {
         if (this.levels.energy > 50) {
             throw new PetNotTiredEnoughException("The pet is not tired enough to sleep");
         }
@@ -287,6 +290,21 @@ public class Pet {
         this.isSleeping = true;
 
         this.lastSleptTime = LocalDateTime.now();
+    }
+
+    public void applyCleaningEffects() {
+        if (this.levels.hygiene == 100) {
+            throw new PetNotDirtyEnoughException("The pet is not dirty enough");
+        }
+
+        this.levels.hungry = Math.min(100, this.levels.hungry + 10);
+        this.levels.happy = Math.min(100, this.levels.happy + 15);
+        this.levels.energy = Math.min(100, this.levels.energy + 20);
+        this.levels.hygiene = Math.max(0, this.levels.hygiene + 50);
+
+        this.isSleeping = false;
+
+        this.LastCleanedTime = LocalDateTime.now();
     }
 
     public void updateDerivedStates() {

@@ -16,7 +16,8 @@ public interface PetService {
     List<Pet> getAllPetsByUserId(Integer userId);
     List<Pet> getAllPetsAsAdmin();
     public Pet play(Integer idPet, Principal principal);
-    public Optional<Pet> feed(int idPet);
-    public Optional<Pet> sleep(int idPet);
-    public Optional<Pet> giveMeds(int idPet);
+    public Pet feed(Integer idPet, Principal principal);
+    public Pet sleep(Integer idPet, Principal principal);
+    public Pet giveMeds(Integer idPet, Principal principal);;
+    public Pet clean(Integer idPet, Principal principal);;
 }

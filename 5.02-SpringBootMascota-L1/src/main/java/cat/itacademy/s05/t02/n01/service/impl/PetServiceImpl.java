@@ -173,56 +173,96 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public Optional<Pet> feed(int id_pet) {
-        Optional<Pet> petOptional = getPetById(id_pet);
-        Pet pet = new Pet();
-        if (petOptional.isPresent()) {
-            pet = petOptional.get();
-        } else {
-            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
-        }
-
+    @Transactional
+    public Pet feed(Integer petId, Principal principal) {
+        Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applyFeedingEffects();
-
-        petRepo.save(pet);
-
-        return petRepo.findById(id_pet);
-
+        pet.updateDerivedStates();
+//        createAndSaveEvent(pet, EventType.PLAY);
+        return petRepo.save(pet);
     }
 
-    @Override
-    public Optional<Pet> sleep(int id_pet) {
-        Optional<Pet> petOptional = getPetById(id_pet);
-        Pet pet = new Pet();
-        if (petOptional.isPresent()) {
-            pet = petOptional.get();
-        } else {
-            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
-        }
+//    @Override
+//    public Optional<Pet> feed(int id_pet) {
+//        Optional<Pet> petOptional = getPetById(id_pet);
+//        Pet pet = new Pet();
+//        if (petOptional.isPresent()) {
+//            pet = petOptional.get();
+//        } else {
+//            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
+//        }
+//
+//        pet.applyFeedingEffects();
+//
+//        petRepo.save(pet);
+//
+//        return petRepo.findById(id_pet);
+//
+//    }
 
+    @Override
+    @Transactional
+    public Pet sleep(Integer petId, Principal principal) {
+        Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applySleepEffects();
-
-        petRepo.save(pet);
-
-        return petRepo.findById(id_pet);
-
+        pet.updateDerivedStates();
+//        createAndSaveEvent(pet, EventType.PLAY);
+        return petRepo.save(pet);
     }
 
+//    @Override
+//    public Optional<Pet> sleep(int id_pet) {
+//        Optional<Pet> petOptional = getPetById(id_pet);
+//        Pet pet = new Pet();
+//        if (petOptional.isPresent()) {
+//            pet = petOptional.get();
+//        } else {
+//            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
+//        }
+//
+//        pet.applySleepEffects();
+//
+//        petRepo.save(pet);
+//
+//        return petRepo.findById(id_pet);
+//
+//    }
+
     @Override
-    public Optional<Pet> giveMeds(int id_pet) {
-        Optional<Pet> petOptional = getPetById(id_pet);
-        Pet pet = new Pet();
-        if (petOptional.isPresent()) {
-            pet = petOptional.get();
-        } else {
-            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
-        }
-
+    @Transactional
+    public Pet giveMeds(Integer petId, Principal principal) {
+        Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applyMedicineEffects();
+        pet.updateDerivedStates();
+//        createAndSaveEvent(pet, EventType.PLAY);
+        return petRepo.save(pet);
+    }
 
-        petRepo.save(pet);
+//    @Override
+//    public Optional<Pet> giveMeds(int id_pet) {
+//        Optional<Pet> petOptional = getPetById(id_pet);
+//        Pet pet = new Pet();
+//        if (petOptional.isPresent()) {
+//            pet = petOptional.get();
+//        } else {
+//            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
+//        }
+//
+//        pet.applyMedicineEffects();
+//
+//        petRepo.save(pet);
+//
+//        return petRepo.findById(id_pet);
+//    }
 
-        return petRepo.findById(id_pet);
+    @Override
+    @Transactional
+    public Pet clean(Integer petId, Principal principal) {
+        Pet pet = getPetAndVerifyOwnership(petId, principal);
+        pet.applyCleaningEffects();
+        pet.updateDerivedStates();
+//        createAndSaveEvent(pet, EventType.PLAY);
+        return petRepo.save(pet);
     }
 
 //    private void createAndSaveEvent(Pet pet, EventType eventType) {

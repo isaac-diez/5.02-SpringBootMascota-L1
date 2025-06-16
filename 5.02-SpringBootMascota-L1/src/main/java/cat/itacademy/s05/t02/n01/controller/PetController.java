@@ -77,20 +77,18 @@ public class PetController {
         }
     }
 
-    @GetMapping("/my-pets") // Ruta descriptiva y no conflictiva
+    @GetMapping("/my-pets")
     public ResponseEntity<List<PetDto>> getMyPets(Principal principal) {
-        // Obtenemos el usuario autenticado a partir del token
+
         String username = principal.getName();
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
-        // Llamamos al servicio para obtener las mascotas de ESE usuario
         List<Pet> petList = petService.getAllPetsByUserId(user.getId());
 
         if (petList.isEmpty()) {
-            return ResponseEntity.noContent().build(); // 204 No Content
+            return ResponseEntity.noContent().build();
         } else {
-            // Mapeamos la lista de entidades a una lista de DTOs para la respuesta
             List<PetDto> petDtoList = petList.stream()
                     .map(petMapper::toDto)
                     .collect(Collectors.toList());
@@ -113,45 +111,37 @@ public class PetController {
 
     @PostMapping("/{id_pet}/play")
     public ResponseEntity<PetDetailResponseDto> playWithPet(@PathVariable int id_pet, Principal principal) {
+        log.info("PetController: Attempting to get pet to play with id_pet: {}", id_pet);
         Pet updatedPet = petService.play(id_pet, principal);
         return ResponseEntity.ok(petMapper.toDetailDto(updatedPet));
     }
 
-
     @PostMapping("/{id_pet}/feed")
-    public ResponseEntity<PetDetailResponseDto> feedPet(@PathVariable int id_pet) {
+    public ResponseEntity<PetDetailResponseDto> feedPet(@PathVariable int id_pet, Principal principal) {
         log.info("PetController: Attempting to get pet to feed with id_pet: {}", id_pet);
-        Optional<Pet> petOptional = petService.feed(id_pet);
-        if (petOptional.isPresent()) {
-            Pet pet = petOptional.get();
-            return ResponseEntity.ok(petMapper.toDetailDto(pet));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Pet updatedPet = petService.feed(id_pet, principal);
+        return ResponseEntity.ok(petMapper.toDetailDto(updatedPet));
     }
 
     @PostMapping("/{id_pet}/sleep")
-    public ResponseEntity<PetDetailResponseDto> getPetToSleep(@PathVariable int id_pet) {
+    public ResponseEntity<PetDetailResponseDto> getPetToSleep(@PathVariable int id_pet, Principal principal) {
         log.info("PetController: Attempting to get pet to sleep with id_pet: {}", id_pet);
-        Optional<Pet> petOptional = petService.sleep(id_pet);
-        if (petOptional.isPresent()) {
-            Pet pet = petOptional.get();
-            return ResponseEntity.ok(petMapper.toDetailDto(pet));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Pet updatedPet = petService.sleep(id_pet, principal);
+        return ResponseEntity.ok(petMapper.toDetailDto(updatedPet));
     }
 
     @PostMapping("/{id_pet}/meds")
-    public ResponseEntity<PetDetailResponseDto> giveMedsToPet(@PathVariable int id_pet) {
+    public ResponseEntity<PetDetailResponseDto> giveMedsToPet(@PathVariable int id_pet, Principal principal) {
         log.info("PetController: Attempting to give meds to pet with id_pet: {}", id_pet);
-        Optional<Pet> petOptional = petService.giveMeds(id_pet);
-        if (petOptional.isPresent()) {
-            Pet pet = petOptional.get();
-            return ResponseEntity.ok(petMapper.toDetailDto(pet));
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        Pet updatedPet = petService.giveMeds(id_pet, principal);
+        return ResponseEntity.ok(petMapper.toDetailDto(updatedPet));
+    }
+
+    @PostMapping("/{id_pet}/clean")
+    public ResponseEntity<PetDetailResponseDto> cleanPet(@PathVariable int id_pet, Principal principal) {
+        log.info("PetController: Attempting to clean pet with id_pet: {}", id_pet);
+        Pet updatedPet = petService.clean(id_pet, principal);
+        return ResponseEntity.ok(petMapper.toDetailDto(updatedPet));
     }
 
 }
