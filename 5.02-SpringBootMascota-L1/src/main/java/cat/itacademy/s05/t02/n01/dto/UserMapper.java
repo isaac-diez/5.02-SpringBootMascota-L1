@@ -8,8 +8,8 @@ public class UserMapper {
 
     public UserDto toDto(User user) {
         UserDto dto = new UserDto();
-        if (user.getId_user() != null) {
-            dto.setId_user(user.getId_user());
+        if (user.getId() != null) {
+            dto.setId_user(user.getId());
         }
         dto.setUsername(user.getUsername());
         dto.setRole(user.getRole());
