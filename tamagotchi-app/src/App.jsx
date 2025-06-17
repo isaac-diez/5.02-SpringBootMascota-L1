@@ -89,7 +89,6 @@ const AuthForm = ({ onSubmit, buttonText }) => {
                 <label htmlFor="password" className="text-sm font-bold block text-left mb-1">Password</label>
                 <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="tamagotchi-input" autoComplete="current-password" />
             </div>
-            {/* FIXED: Removed w-full and centered the button */}
             <div className="flex justify-center pt-2">
                  <button type="submit" className="btn btn-primary">{buttonText}</button>
             </div>
@@ -162,14 +161,47 @@ const PetCard = ({ pet }) => {
 };
 
 const PetDisplay = ({ pet }) => (
-    <div className="tamagotchi-container flex justify-center items-center h-full">
+    <div className="tamagotchi-container-detail flex justify-center items-center">
         <img src={`https://placehold.co/400x400/e9d5ff/222322?text=${pet.name}`} alt={pet.name} className="w-full max-w-[300px] h-auto rounded-lg border-4 border-black"/>
     </div>
 );
 
-const PetStatBar = ({ label, value, colorClass }) => { const percentage = Math.max(0, Math.min(100, value)); return (<div className="mb-2"><div className="flex justify-between mb-1"><span className="text-base font-bold">{label}</span><span className="text-sm font-bold">{Math.round(percentage)}%</span></div><div className="w-full bg-gray-200 rounded-full h-5 border-2 border-black"><div className={`${colorClass} h-full rounded-full border-r-2 border-black`} style={{ width: `${percentage}%` }}></div></div></div>);};
-const PetStats = ({ pet }) => { if (!pet || !pet.levels) return <div className="tamagotchi-container animate-pulse"><div className="h-8 bg-gray-300 rounded w-3/4 mx-auto"></div></div>; return (<div className="tamagotchi-container space-y-2"><h3 className="font-pixel text-xl text-center mb-4">State of {pet.name}</h3><PetStatBar label="Health" value={pet.levels.health} colorClass="bg-green-400" /><PetStatBar label="Happiness" value={pet.levels.happy} colorClass="bg-yellow-300" /><PetStatBar label="Hunger" value={pet.levels.hungry} colorClass="bg-orange-400" /><PetStatBar label="Energy" value={pet.levels.energy} colorClass="bg-blue-400" /><PetStatBar label="Hygiene" value={pet.levels.hygiene} colorClass="bg-teal-300" /></div>);};
-const PetActions = ({ petId, onAction }) => { const [loadingAction, setLoadingAction] = useState(null); const handleAction = async (action) => { setLoadingAction(action); try { const response = await apiClient.post(`/pet/${petId}/${action}`); onAction(response.data); } catch (error) { console.error(`Error performing action ${action}:`, error); } finally { setLoadingAction(null); }}; return (<div className="tamagotchi-container"><h3 className="font-pixel text-xl text-center mb-4">Actions</h3><div className="grid grid-cols-2 gap-4"><button onClick={() => handleAction('feed')} disabled={!!loadingAction} className="btn bg-green-400 w-full">{loadingAction === 'feed' ? '...' : 'Feed'}</button><button onClick={() => handleAction('play')} disabled={!!loadingAction} className="btn bg-yellow-300 w-full">{loadingAction === 'play' ? '...' : 'Play'}</button><button onClick={() => handleAction('sleep')} disabled={!!loadingAction} className="btn bg-blue-400 w-full">{loadingAction === 'sleep' ? '...' : 'Sleep'}</button><button onClick={() => handleAction('meds')} disabled={!!loadingAction} className="btn bg-purple-400 w-full">{loadingAction === 'meds' ? '...' : 'Meds'}</button><button onClick={() => handleAction('clean')} disabled={!!loadingAction} className="btn bg-teal-300 col-span-2 w-full">{loadingAction === 'clean' ? '...' : 'Clean'}</button></div></div>);};
+const PetStatBar = ({ label, value, hexColor }) => {
+    const percentage = Math.max(0, Math.min(100, value));
+    return (
+        <div className="mb-2">
+            <div className="flex justify-between mb-1">
+                <span className="text-base font-bold">{label}</span>
+                <span className="text-sm font-bold">{Math.round(percentage)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-5 border-2 border-black">
+                <div
+                    className="h-full rounded-full"
+                    style={{
+                        width: `${percentage}%`,
+                        backgroundColor: hexColor
+                    }}>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const PetStats = ({ pet }) => {
+    if (!pet || !pet.levels) return <div className="tamagotchi-container-detail animate-pulse"><div className="h-8 bg-gray-300 rounded w-3/4 mx-auto"></div></div>;
+    return (
+        <div className="tamagotchi-container-detail space-y-2">
+            <h3 className="font-pixel text-xl text-center mb-4">State of {pet.name}</h3>
+            <PetStatBar label="Health"    value={pet.levels.health}  hexColor="#4ade80" />
+            <PetStatBar label="Happiness" value={pet.levels.happy}   hexColor="#fde047" />
+            <PetStatBar label="Hunger"    value={pet.levels.hungry}  hexColor="#fb923c" />
+            <PetStatBar label="Energy"    value={pet.levels.energy}  hexColor="#60a5fa" />
+            <PetStatBar label="Hygiene"   value={pet.levels.hygiene} hexColor="#5eead4" />
+        </div>
+    );
+};
+
+const PetActions = ({ petId, onAction }) => { const [loadingAction, setLoadingAction] = useState(null); const handleAction = async (action) => { setLoadingAction(action); try { const response = await apiClient.post(`/pet/${petId}/${action}`); onAction(response.data); } catch (error) { console.error(`Error performing action ${action}:`, error); } finally { setLoadingAction(null); }}; return (<div className="tamagotchi-container-detail"><h3 className="font-pixel text-xl text-center mb-4">Actions</h3><div className="grid grid-cols-2 gap-4"><button onClick={() => handleAction('feed')} disabled={!!loadingAction} className="btn bg-green-400 w-full">{loadingAction === 'feed' ? '...' : 'Feed'}</button><button onClick={() => handleAction('play')} disabled={!!loadingAction} className="btn bg-yellow-300 w-full">{loadingAction === 'play' ? '...' : 'Play'}</button><button onClick={() => handleAction('sleep')} disabled={!!loadingAction} className="btn bg-blue-400 w-full">{loadingAction === 'sleep' ? '...' : 'Sleep'}</button><button onClick={() => handleAction('meds')} disabled={!!loadingAction} className="btn bg-purple-400 w-full">{loadingAction === 'meds' ? '...' : 'Meds'}</button><button onClick={() => handleAction('clean')} disabled={!!loadingAction} className="btn bg-teal-300 col-span-2 w-full">{loadingAction === 'clean' ? '...' : 'Clean'}</button></div></div>);};
 
 // --- PAGES ---
 const LoginPage = () => {
@@ -181,7 +213,6 @@ const LoginPage = () => {
     };
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
-            {/* FIXED: Using max-w-sm for a responsive, centered container */}
             <div className="tamagotchi-container w-full max-w-sm">
                 <h1 className="font-pixel text-3xl text-center mb-2">Login</h1>
                 <p className="text-center text-gray-600 mb-6">Welcome back!</p>
@@ -205,7 +236,6 @@ const RegisterPage = () => {
     };
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
-             {/* FIXED: Using max-w-sm for a responsive, centered container */}
             <div className="tamagotchi-container w-full max-w-sm">
                 <h1 className="font-pixel text-3xl text-center mb-2">Register</h1>
                 <p className="text-center text-gray-600 mb-6">Create your account!</p>
@@ -291,11 +321,13 @@ const PetDetailPage = () => {
             <header className="flex justify-between items-center mb-8">
                 <Link to="/pets" className="btn btn-secondary">{'<'} Back</Link>
                 <h1 className="font-pixel text-3xl sm:text-4xl text-center">{pet.name}</h1>
-                <div className="w-24"></div> {/* Spacer */}
+                <div className="w-24"></div> {/* Spacer to balance header */}
             </header>
             <main>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-2 md:grid-cols-2 gap-8 items-start">
+                    {/* Left Column for the Image */}
                     <PetDisplay pet={pet} />
+                    {/* Right Column for Stats and Actions */}
                     <div className="space-y-8">
                         <PetStats pet={pet} />
                         <PetActions petId={pet.petId} onAction={handlePetUpdate} />

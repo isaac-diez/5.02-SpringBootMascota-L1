@@ -43,15 +43,27 @@
     background-color: white;
     border: 3px solid var(--tam-dark);
     border-radius: 1.5rem; /* 24px */
-    padding: 2rem; /* 32px */
+    padding: 4rem; /* 32px */
     box-shadow: 8px 8px 0px var(--tam-dark);
-    width: 100%;
+    width: 90%;
   }
+
+  .tamagotchi-container-detail {
+      background-color: white;
+      border: 3px solid var(--tam-dark);
+      border-radius: 1.5rem; /* 24px */
+      padding: 4rem; /* 32px */
+      box-shadow: 8px 8px 0px var(--tam-dark);
+      width: 75%;
+      margin: 50px;
+    }
 
   /* Custom button styles */
   .btn {
+  margin-top: 20px;
     padding: 0.75rem 1.5rem;
     border-radius: 9999px; /* pill shape */
+    font-size: 20px;
     font-weight: bold;
     color: var(--tam-dark);
     border: 3px solid var(--tam-dark);
@@ -78,13 +90,14 @@
 
   /* Custom form input style */
   .tamagotchi-input {
-    width: 100%;
+    width: 90%;
     padding: 1rem 1rem;
     background-color: #fff;
     border: 3px solid var(--tam-dark);
     border-radius: 0.75rem; /* 12px */
     color: var(--tam-dark);
     transition: all 0.2s ease-in-out;
+    font-size: 20px;
   }
   .tamagotchi-input:focus {
     outline: none;
