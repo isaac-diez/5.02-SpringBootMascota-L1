@@ -35,13 +35,16 @@ const PetDetailPage = () => {
 
     return (
         <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
             <header className="flex justify-between items-center mb-8">
+
                 <Link to="/pets" className="btn btn-secondary">{'<'} Back</Link>
+
                 <h1 className="font-pixel text-3xl sm:text-4xl text-center">{pet.name}</h1>
                 <div className="w-24"></div> {/* Spacer to balance header */}
             </header>
             <main>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <div className="flex md:grid-cols-2 lg:grid-cols-2 gap-8 items-start">
                     {/* Left Column for the Image */}
                     <PetDisplay pet={pet} />
                     {/* Right Column for Stats and Actions */}

@@ -18,7 +18,7 @@ const LoginPage = () => {
 
     return (
         <div className="min-h-screen flex items-center justify-center p-4">
-            <div className="tamagotchi-container w-full max-w-sm">
+            <div className="tamagotchi-container w-25 max-w-sm">
                 <h1 className="font-pixel text-3xl text-center mb-2">Login</h1>
                 <p className="text-center text-gray-600 mb-6">Welcome back!</p>
                 <AuthForm onSubmit={handleLogin} buttonText="Login"/>

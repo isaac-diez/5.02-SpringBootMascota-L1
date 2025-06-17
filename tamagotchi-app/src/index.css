@@ -212,6 +212,16 @@ body {
     width: 100%;
   }
 
+    .tamagotchi-container-detail {
+        background-color: white;
+        border: 3px solid var(--tam-dark);
+        border-radius: 1.5rem; /* 24px */
+        padding: 4rem; /* 32px */
+        box-shadow: 8px 8px 0px var(--tam-dark);
+        width:60%;
+        margin: 50px;
+      }
+
   /* Custom button styles */
  .btn {
     padding: 0.75rem 1.5rem;
@@ -254,4 +264,34 @@ body {
     outline: none;
     box-shadow: 0 0 0 3px var(--tam-yellow);
   }
+
+/* Ensure grid items take full width */
+.grid {
+  width: 100%;
+}
+
+/* Pet card styling */
+.pet-card {
+  width: 100%;
+  min-width: 0; /* Prevent flex-shrink issues */
+}
+
+/* Responsive grid fix */
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
 }

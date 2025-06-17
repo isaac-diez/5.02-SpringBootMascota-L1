@@ -11,7 +11,7 @@ const PetStats = ({ pet }) => {
     }
 
     return (
-        <div className="tamagotchi-container space-y-2">
+        <div className="tamagotchi-container-detail">
             <h3 className="font-pixel text-xl text-center mb-4">State of {pet.name}</h3>
             <PetStatBar label="Health"    value={pet.levels.health}  hexColor="#4ade80" />
             <PetStatBar label="Happiness" value={pet.levels.happy}   hexColor="#fde047" />
