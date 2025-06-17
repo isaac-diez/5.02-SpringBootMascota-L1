@@ -1,3 +1,169 @@
+/*
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #4f46e5;
+  --secondary: #10b981;
+  --danger: #ef4444;
+  --text: #1f2937;
+  --background: #f9fafb;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background-color: var(--background);
+}
+
+*/
+/* Auth Pages *//*
+
+.auth-page {
+  @apply max-w-md mx-auto p-6 bg-white rounded-lg shadow-md;
+}
+
+.auth-form {
+  @apply space-y-4;
+}
+
+.form-group {
+  @apply space-y-1;
+}
+
+.form-group label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+.form-group input,
+.form-group select {
+  @apply w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500;
+}
+
+.error-message {
+  @apply text-red-500 text-sm;
+}
+
+.link-button {
+  @apply text-indigo-600 hover:text-indigo-800;
+}
+
+*/
+/* Pets List *//*
+
+.pets-page {
+  @apply container mx-auto p-4;
+}
+
+.page-header {
+  @apply flex justify-between items-center mb-8;
+}
+
+.pets-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+}
+
+.pet-card {
+  @apply bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-105;
+}
+
+.pet-image-container {
+  @apply relative h-48 bg-gray-100 flex items-center justify-center;
+}
+
+.status-badge {
+  @apply absolute top-2 right-2 text-xs text-white px-2 py-1 rounded-full;
+}
+
+.pet-info {
+  @apply p-4;
+}
+
+.pet-info h3 {
+  @apply font-semibold text-lg;
+}
+
+*/
+/* Pet Detail *//*
+
+.pet-detail-page {
+  @apply container mx-auto p-4;
+}
+
+.pet-detail-content {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+}
+
+.pet-image-section {
+  @apply bg-white p-6 rounded-lg shadow-md;
+}
+
+.pet-image {
+  @apply w-full h-64 object-contain;
+}
+
+.pet-interaction-section {
+  @apply space-y-6;
+}
+
+*/
+/* Stats *//*
+
+.pet-stats {
+  @apply bg-white p-6 rounded-lg shadow-md;
+}
+
+.stat-bar {
+  @apply mb-4;
+}
+
+.stat-label {
+  @apply flex justify-between text-sm font-medium;
+}
+
+.stat-progress {
+  @apply w-full bg-gray-200 rounded-full h-2.5 mt-1;
+}
+
+.stat-fill {
+  @apply h-2.5 rounded-full;
+}
+
+*/
+/* Modal *//*
+
+.modal-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.modal-content {
+  @apply bg-white rounded-lg p-6 relative max-w-md w-full;
+}
+
+.modal-close {
+  @apply absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl;
+}
+
+*/
+/* Buttons *//*
+
+.btn {
+  @apply px-4 py-2 rounded-md font-medium transition-colors;
+}
+
+.btn-primary {
+  @apply bg-indigo-600 text-white hover:bg-indigo-700;
+}
+
+.btn-secondary {
+  @apply bg-gray-500 text-white hover:bg-gray-600;
+}
+
+.btn-danger {
+  @apply bg-red-500 text-white hover:bg-red-600;
+}*/
+
 /* Import the pixel font */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -6,8 +172,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Define the new Tamagotchi-inspired theme
-*/
+/* Define the new Tamagotchi-inspired theme */
 @layer base {
   :root {
     /* Color Palette from tamagotchi-official.com */
@@ -30,76 +195,62 @@
   }
 
   /* Define the pixel font utility class */
-  .font-pixel {
+ .font-pixel {
     font-family: 'Press Start 2P', cursive;
   }
 }
 
-/* Custom styles for our components
-*/
+/* Custom styles for our components */
 @layer components {
   /* Main content container style */
-  .tamagotchi-container {
+ .tamagotchi-container {
     background-color: white;
     border: 3px solid var(--tam-dark);
     border-radius: 1.5rem; /* 24px */
-    padding: 4rem; /* 32px */
+    padding: 2rem; /* 32px */
     box-shadow: 8px 8px 0px var(--tam-dark);
-    width: 90%;
+    width: 100%;
   }
 
-  .tamagotchi-container-detail {
-      background-color: white;
-      border: 3px solid var(--tam-dark);
-      border-radius: 1.5rem; /* 24px */
-      padding: 4rem; /* 32px */
-      box-shadow: 8px 8px 0px var(--tam-dark);
-      width: 75%;
-      margin: 50px;
-    }
-
   /* Custom button styles */
-  .btn {
-  margin-top: 20px;
+ .btn {
     padding: 0.75rem 1.5rem;
     border-radius: 9999px; /* pill shape */
-    font-size: 20px;
     font-weight: bold;
     color: var(--tam-dark);
     border: 3px solid var(--tam-dark);
     box-shadow: 4px 4px 0px var(--tam-dark);
     transition: all 0.1s ease-in-out;
   }
-  .btn:hover {
+ .btn:hover {
     transform: translate(2px, 2px);
     box-shadow: 2px 2px 0px var(--tam-dark);
   }
-  .btn:active {
+ .btn:active {
     transform: translate(4px, 4px);
     box-shadow: none;
   }
-  .btn-primary {
+ .btn-primary {
     background-color: var(--tam-yellow);
   }
-  .btn-secondary {
+ .btn-secondary {
     background-color: var(--tam-pink);
   }
-  .btn-danger {
+ .btn-danger {
     background-color: var(--tam-teal);
   }
 
   /* Custom form input style */
-  .tamagotchi-input {
-    width: 90%;
-    padding: 1rem 1rem;
+ .tamagotchi-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
     background-color: #fff;
     border: 3px solid var(--tam-dark);
     border-radius: 0.75rem; /* 12px */
     color: var(--tam-dark);
     transition: all 0.2s ease-in-out;
-    font-size: 20px;
   }
-  .tamagotchi-input:focus {
+ .tamagotchi-input:focus {
     outline: none;
     box-shadow: 0 0 0 3px var(--tam-yellow);
   }

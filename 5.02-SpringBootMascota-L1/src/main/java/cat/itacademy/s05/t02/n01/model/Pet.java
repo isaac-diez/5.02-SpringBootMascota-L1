@@ -253,6 +253,7 @@ public class Pet {
             throw new PetTooTiredException("The pet too tired to play");
         }
 
+        this.levels.happy = Math.min(100, this.levels.hungry + 35);
         this.levels.hungry = Math.min(100, this.levels.hungry + 20);
         this.levels.happy = Math.min(100, this.levels.happy + 30);
         this.levels.energy = Math.max(0, this.levels.energy - 20);
@@ -268,6 +269,7 @@ public class Pet {
             throw new PetNotSickException("The pet is not sick");
         }
 
+        this.levels.happy = Math.min(100, this.levels.hungry + 25);
         this.levels.hungry = Math.min(100, this.levels.hungry + 10);
         this.levels.happy = Math.min(100, this.levels.happy + 20);
         this.levels.energy = Math.min(100, this.levels.energy + 20);
@@ -282,6 +284,7 @@ public class Pet {
             throw new PetNotTiredEnoughException("The pet is not tired enough to sleep");
         }
 
+        this.levels.happy = Math.min(100, this.levels.hungry + 20);
         this.levels.hungry = Math.min(100, this.levels.hungry + 20);
         this.levels.happy = Math.min(100, this.levels.happy + 20);
         this.levels.energy = Math.min(100, this.levels.energy + 50);
@@ -297,6 +300,7 @@ public class Pet {
             throw new PetNotDirtyEnoughException("The pet is not dirty enough");
         }
 
+        this.levels.happy = Math.min(100, this.levels.hungry + 30);
         this.levels.hungry = Math.min(100, this.levels.hungry + 10);
         this.levels.happy = Math.min(100, this.levels.happy + 15);
         this.levels.energy = Math.min(100, this.levels.energy + 20);
@@ -331,7 +335,6 @@ public class Pet {
         int happy = this.levels.getHappy();
         int hungry = this.levels.getHungry();
         int energy = this.levels.getEnergy();
-//        HappinessState newHappinessState;
 
         if (happy <= HAPPINESS_THRESHOLD_VERY_LOW || hungry >= HUNGER_THRESHOLD_CRITICAL || energy <= ENERGY_THRESHOLD_CRITICAL) {
             this.happinessState = HappinessState.MISERABLE;
