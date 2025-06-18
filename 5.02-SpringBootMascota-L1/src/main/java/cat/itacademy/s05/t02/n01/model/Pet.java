@@ -362,6 +362,7 @@ public class Pet {
 
         if (this.evolutionState == EvolutionState.DEAD) {
             this.healthState = HealthState.DEAD;
+
             return;
         }
 
@@ -415,10 +416,10 @@ public class Pet {
 
         if (this.levels.getHealth() <= 0 && this.evolutionState != EvolutionState.DEAD) {
             this.evolutionState = EvolutionState.DEAD;
-            this.healthState = HealthState.SICK;
+            this.healthState = HealthState.DEAD;
+            this.levels.setHealth(0);
             this.levels.setHungry(0);
             this.levels.setEnergy(0);
-            this.levels.setHappy(0);
             this.levels.setHygiene(0);
             this.isSleeping = false;
 
