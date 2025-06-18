@@ -2,7 +2,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+*/
 
+/*
 :root {
   --primary: #4f46e5;
   --secondary: #10b981;
@@ -167,7 +169,7 @@ body {
 /* Import the pixel font */
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-/* Import base Tailwind styles */
+/* 2. Add the Tailwind directives. This was the missing piece. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -209,7 +211,8 @@ body {
     border-radius: 1.5rem; /* 24px */
     padding: 2rem; /* 32px */
     box-shadow: 8px 8px 0px var(--tam-dark);
-    width: 100%;
+
+
   }
 
     .tamagotchi-container-detail {

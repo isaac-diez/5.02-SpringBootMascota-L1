@@ -25,7 +25,7 @@ const PetActions = ({ petId, onAction }) => {
     };
 
     return (
-        <div className="tamagotchi-container-detail">
+        <div className="tamagotchi-container">
             <h3 className="font-pixel text-xl text-center mb-4">Actions</h3>
             <div className="grid grid-cols-2 gap-4">
                 <button onClick={() => handleAction('feed')} disabled={!!loadingAction} className="btn w-full" style={{backgroundColor: actionColors.feed}}>{loadingAction === 'feed'? '...' : 'Feed'}</button>

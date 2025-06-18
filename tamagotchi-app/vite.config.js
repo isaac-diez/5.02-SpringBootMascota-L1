@@ -1,7 +1,13 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vite.dev/config/
 export default defineConfig({
+  // THIS IS THE FIX
+  server: {
+    fs: {
+      // Allow access to the project root directory
+      allow: ['.'],
+    },
+  },
   plugins: [react()],
 })

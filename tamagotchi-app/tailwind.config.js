@@ -2,10 +2,14 @@
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}", // This line is crucial
+    "./src/**/*.{js,ts,jsx,tsx}", // <-- Now scanning the src folder again
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        pixel: ['"Press Start 2P"', 'cursive'],
+      },
+    },
   },
   plugins: [],
 }

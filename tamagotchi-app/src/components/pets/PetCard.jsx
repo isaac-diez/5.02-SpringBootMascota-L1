@@ -1,17 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import PetImage from './PetImage'; // <-- Import the new component
 
 const PetCard = ({ pet }) => {
-    return (
-        <Link to={`/pets/${pet.id}`} className="block group">
-            <div className="bg-white p-4 border-4 border-black rounded-2xl transition-transform transform group-hover:scale-105 shadow-[8px_8px_0px_#000]">
-                <div className="bg-pink-200 h-40 rounded-lg mb-4 border-2 border-black flex items-center justify-center">
-                     <img src={`https://placehold.co/150x150/a3e635/222322?text=PET`} alt={pet.name} className="w-32 h-32 object-cover"/>
-                </div>
-                <h3 className="font-pixel text-lg text-center truncate">{pet.petName}</h3>
-            </div>
-        </Link>
-    );
+  return (
+    <Link to={`/pets/${pet.id}`} className="block tamagotchi-container text-center hover:scale-105 transition-transform duration-200">
+      <div className="p-4">
+        {/* Replace your old image logic with this one line */}
+        <PetImage pet={pet} />
+
+        <h3 className="font-pixel text-2xl mt-4 truncate">{pet.petName}</h3>
+        <p className="text-sm uppercase text-gray-500">{pet.sleeping ? 'Sleeping' : pet.healthState}</p>
+      </div>
+    </Link>
+  );
 };
 
 export default PetCard;
