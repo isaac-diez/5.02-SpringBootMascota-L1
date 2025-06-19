@@ -305,7 +305,7 @@ public class Pet {
             throw new PetNotDirtyEnoughException("The pet is not dirty enough");
         }
 
-        this.levels.health = Math.max(100, this.levels.health + 25);
+        this.levels.health = Math.min(100, this.levels.health + 25);
         this.levels.hungry = Math.min(100, this.levels.hungry + 10);
         this.levels.happy = Math.min(100, this.levels.happy + 15);
         this.levels.energy = Math.min(100, this.levels.energy + 20);
@@ -363,25 +363,47 @@ public class Pet {
         int healthLevel = this.levels.getHealth();
         int hungryLevel = this.levels.getHungry();
 
+        // --- REVISED LOGIC ---
+        // The logic now follows a strict priority order to determine the pet's state.
+
+        // 1. Check for the most critical state: DEAD. This overrides everything.
         if (this.evolutionState == EvolutionState.DEAD) {
             this.healthState = HealthState.DEAD;
-
+            this.isSick = false; // A dead pet is not "sick"
             return;
         }
 
-        if (healthLevel <= HEALTH_THRESHOLD_CRITICAL || hungryLevel >= HUNGER_THRESHOLD_CRITICAL) {
+        // 2. Check for SICKNESS. This is the next highest priority.
+        // A pet is only SICK if its health points are critically low.
+        if (healthLevel <= HEALTH_THRESHOLD_CRITICAL) { // e.g., <= 10
             this.healthState = HealthState.SICK;
-        } else if (healthLevel <= HEALTH_THRESHOLD_LOW) {
+            this.isSick = true;
+            return; // Exit here. SICK is the definitive state.
+        }
+
+        // 3. Check for WEAKNESS due to critical stats (like hunger).
+        // This prevents a starving pet from being described as "STRONG".
+        if (hungryLevel >= HUNGER_THRESHOLD_CRITICAL) { // e.g., >= 80
             this.healthState = HealthState.WEAK;
-        } else if (healthLevel >= HEALTH_THRESHOLD_HIGH) {
-            this.healthState = HealthState.STRONG;
-        } else if (healthLevel >= HEALTH_THRESHOLD_VERY_HIGH) {
+            this.isSick = false; // It's weak from hunger, not medically sick.
+            return; // Exit here. WEAK is the definitive state for this condition.
+        }
+
+        // 4. If no critical conditions are met, determine the state based on health level.
+        // This logic now only runs for pets that are not dead, sick, or starving.
+        if (healthLevel <= HEALTH_THRESHOLD_LOW) { // e.g., <= 30
+            this.healthState = HealthState.WEAK;
+        } else if (healthLevel >= HEALTH_THRESHOLD_VERY_HIGH) { // e.g., >= 85
             this.healthState = HealthState.FIT;
+        } else if (healthLevel >= HEALTH_THRESHOLD_HIGH) { // e.g., >= 65
+            this.healthState = HealthState.STRONG;
         } else {
             this.healthState = HealthState.OK;
         }
 
-        this.isSick = (this.healthState == HealthState.SICK);
+        // If we've reached this point, the pet is definitely not sick.
+        this.isSick = false;
+
 
 //        if (this.healthState != this.healthState) {
 //            this.healthState = this.healthState;
