@@ -15,6 +15,7 @@ public interface PetService {
     public List<Pet> getAllPets();
     List<Pet> getAllPetsByUserId(Integer userId);
     List<Pet> getAllPetsAsAdmin();
+    public void deletePet(int id_pet);
     public Pet play(Integer idPet, Principal principal);
     public Pet feed(Integer idPet, Principal principal);
     public Pet sleep(Integer idPet, Principal principal);

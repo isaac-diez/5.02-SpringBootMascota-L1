@@ -14,4 +14,5 @@ public interface PetRepo extends JpaRepository<Pet, Integer> {
     Optional<Pet> findById(int id);
     List<Pet> findAllByUserId(Integer userId);
     List<Pet> findAllByEvolutionStateNot(EvolutionState evolutionState);
+
 }

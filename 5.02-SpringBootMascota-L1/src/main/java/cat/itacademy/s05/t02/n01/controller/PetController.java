@@ -3,7 +3,6 @@ package cat.itacademy.s05.t02.n01.controller;
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
 import cat.itacademy.s05.t02.n01.dto.PetDetailResponseDto;
 import cat.itacademy.s05.t02.n01.dto.PetDto;
-import cat.itacademy.s05.t02.n01.dto.PetResponseDto;
 import cat.itacademy.s05.t02.n01.model.*;
 import cat.itacademy.s05.t02.n01.service.PetService;
 import cat.itacademy.s05.t02.n01.service.UserService;
@@ -107,6 +106,13 @@ public class PetController {
                     .toList();
             return ResponseEntity.ok(petDtoList);
         }
+    }
+
+    @DeleteMapping("delete/{id_pet}")
+    public ResponseEntity<Void> deletePet(@PathVariable int id_pet) {
+        log.info("PetController: Attempting to delete pet with id_pet: {}", id_pet);
+        petService.deletePet(id_pet);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{id_pet}/play")

@@ -134,6 +134,12 @@ public class PetServiceImpl implements PetService {
         return petRepo.findAll();
     }
 
+    @Override
+    public void deletePet(int id_pet) {
+
+        petRepo.deleteById(id_pet);
+    }
+
 //    @Override
 //    public Optional<Pet> play(int id_pet) {
 //        Optional<Pet> petOptional = getPetById(id_pet);
