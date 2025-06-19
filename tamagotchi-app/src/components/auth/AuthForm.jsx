@@ -16,7 +16,7 @@ const AuthForm = ({ isRegister, onSubmit, error, loading }) => {
     };
 
     return (
-        <div className="tamagotchi-container w-11/12 sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4">
+        <div className="tamagotchi-container">
             <h1 className="font-pixel text-4xl text-center mb-6">{isRegister ? 'Register' : 'Login'}</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div>

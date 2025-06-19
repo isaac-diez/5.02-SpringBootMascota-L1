@@ -4,6 +4,19 @@ import apiClient from '../api/apiClient';
 import PetCard from '../components/pets/PetCard';
 import CreatePetForm from '../components/pets/CreatePetForm';
 
+// --- NEW HELPER FUNCTION ---
+// This is the same function from AdminPage. It derives the 'healthState' string
+// that your PetImage component needs from the data we have available.
+const deriveHealthState = (pet) => {
+  if (pet.evolutionState === 'DEAD') return 'dead';
+  if (pet.healthLevel < 10) return 'sick';
+  if (pet.healthLevel < 30) return 'weak';
+  if (pet.healthLevel < 65) return 'ok';
+  if (pet.healthLevel < 85) return 'fit';
+  return 'strong';
+};
+
+
 const PetListPage = () => {
     const { user, logout } = useAuth();
     const [pets, setPets] = useState([]);
@@ -15,8 +28,20 @@ const PetListPage = () => {
         const fetchPets = async () => {
             try {
                 setLoading(true);
+                // NOTE: The user's original file used `/pet/my-pets`, which is correct for this page.
                 const response = await apiClient.get('/pet/my-pets');
-                setPets(response.data || []);
+                const petsFromApi = response.data || [];
+
+                // --- FIX ---
+                // We transform the pet data here, adding the 'healthState' property
+                // before setting the state. This makes the data compatible with your components.
+                const petsWithDerivedState = petsFromApi.map(pet => ({
+                    ...pet,
+                    healthState: deriveHealthState(pet)
+                }));
+
+                setPets(petsWithDerivedState);
+
             } catch (err) {
                 console.error("Error fetching pets:", err);
                 setError('Could not load your pets.');
@@ -28,7 +53,12 @@ const PetListPage = () => {
     }, []);
 
     const handlePetCreated = (newPet) => {
-        setPets(currentPets => [...currentPets, newPet]);
+        // Also transform the newly created pet so its image shows correctly right away.
+        const newPetWithState = {
+            ...newPet,
+            healthState: deriveHealthState(newPet)
+        };
+        setPets(currentPets => [...currentPets, newPetWithState]);
         setIsCreating(false);
     };
 
@@ -60,7 +90,7 @@ const PetListPage = () => {
                          </div>
                     ) : (
                         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                            {/* FIX: Use the correct `petId` property for the key */}
+                            {/* This part remains unchanged. It now passes the enhanced pet object to PetCard. */}
                             {pets.map(pet => (<PetCard key={pet.petId} pet={pet} />))}
                         </div>
                     )}

@@ -215,11 +215,11 @@ body {
 
   }
 
-    .tamagotchi-container-detail {
+    .tamagotchi-container-admin-image {
         background-color: white;
         border: 3px solid var(--tam-dark);
         border-radius: 1.5rem; /* 24px */
-        padding: 4rem; /* 32px */
+        padding: 2rem; /* 32px */
         box-shadow: 8px 8px 0px var(--tam-dark);
         width:60%;
         margin: 50px;
