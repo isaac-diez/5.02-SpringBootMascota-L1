@@ -89,6 +89,7 @@ public class Pet {
     private static final int BASE_PASSIVE_HUNGER_INCREASE = 5;
     private static final int BASE_PASSIVE_ENERGY_DECREASE = 4;
     private static final int BASE_PASSIVE_HYGIENE_DECREASE = 2;
+    private static final int BASE_PASSIVE_HEALTH_DECREASE = 9;
 
     private static final int HUNGER_THRESHOLD_HIGH = 50;
     private static final int HUNGER_THRESHOLD_CRITICAL = 80;
@@ -141,6 +142,7 @@ public class Pet {
         int currentHungerIncrease = (int) (BASE_PASSIVE_HUNGER_INCREASE * hungerRateModifier);
         int currentEnergyDecrease = (int) (BASE_PASSIVE_ENERGY_DECREASE * energyRateModifier);
         int currentHygieneDecrease = BASE_PASSIVE_HYGIENE_DECREASE;
+        int currentHealthDecrease = BASE_PASSIVE_HEALTH_DECREASE;
         int naturalHygieneRecovery = 0;
 
         // Bonificación por estar "Saludable y Feliz"
@@ -161,6 +163,7 @@ public class Pet {
 
         this.levels.setHungry(this.levels.getHungry() + currentHungerIncrease);
         this.levels.setHygiene(this.levels.getHygiene() - currentHygieneDecrease + naturalHygieneRecovery);
+        this.levels.setHealth(this.levels.getHealth() - currentHealthDecrease);
 
         if (!isSleeping) {
             this.levels.setEnergy(this.levels.getEnergy() - currentEnergyDecrease);
@@ -234,6 +237,7 @@ public class Pet {
             throw new PetNotHungryException("The pet is not hungry");
         }
 
+        this.levels.health = Math.min(100, this.levels.health + 10);
         this.levels.hungry = Math.max(0, this.levels.hungry - 20);
         this.levels.energy = Math.min(100, this.levels.energy + 20);
         this.levels.hygiene = Math.max(0, this.levels.hygiene - 5);
@@ -253,7 +257,7 @@ public class Pet {
             throw new PetTooTiredException("The pet too tired to play");
         }
 
-        this.levels.happy = Math.min(100, this.levels.hungry + 35);
+        this.levels.health = Math.min(100, this.levels.health + 15);
         this.levels.hungry = Math.min(100, this.levels.hungry + 20);
         this.levels.happy = Math.min(100, this.levels.happy + 30);
         this.levels.energy = Math.max(0, this.levels.energy - 20);
@@ -269,6 +273,7 @@ public class Pet {
             throw new PetNotSickException("The pet is not sick");
         }
 
+        this.levels.health = Math.min(100, this.levels.health + 30);
         this.levels.happy = Math.min(100, this.levels.hungry + 25);
         this.levels.hungry = Math.min(100, this.levels.hungry + 10);
         this.levels.happy = Math.min(100, this.levels.happy + 20);
@@ -284,7 +289,7 @@ public class Pet {
             throw new PetNotTiredEnoughException("The pet is not tired enough to sleep");
         }
 
-        this.levels.happy = Math.min(100, this.levels.hungry + 20);
+        this.levels.health = Math.min(100, this.levels.health + 10);
         this.levels.hungry = Math.min(100, this.levels.hungry + 20);
         this.levels.happy = Math.min(100, this.levels.happy + 20);
         this.levels.energy = Math.min(100, this.levels.energy + 50);
@@ -300,7 +305,7 @@ public class Pet {
             throw new PetNotDirtyEnoughException("The pet is not dirty enough");
         }
 
-        this.levels.happy = Math.min(100, this.levels.hungry + 30);
+        this.levels.health = Math.max(100, this.levels.health + 25);
         this.levels.hungry = Math.min(100, this.levels.hungry + 10);
         this.levels.happy = Math.min(100, this.levels.happy + 15);
         this.levels.energy = Math.min(100, this.levels.energy + 20);
@@ -314,7 +319,6 @@ public class Pet {
     public void updateDerivedStates() {
 
         updateCurrentHealthState();
-
         checkAndSetIfDeceased();
 
         if (this.evolutionState == EvolutionState.DEAD) {
@@ -322,7 +326,6 @@ public class Pet {
         }
 
         updateCurrentHappinessState();
-
         updateCurrentEvolutionStateByAge();
     }
 
