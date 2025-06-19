@@ -89,4 +89,8 @@ public class UserService implements UserDetailsService {
             throw new EmptyUserListException("No users in the DB.");
         return userRepo.findAll();
     }
+
+    public void deleteUser(int id) {
+        userRepo.deleteById(id);
+    }
 }
