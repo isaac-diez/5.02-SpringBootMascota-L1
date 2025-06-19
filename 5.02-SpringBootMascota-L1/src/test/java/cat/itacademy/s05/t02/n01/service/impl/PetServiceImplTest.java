@@ -45,8 +45,8 @@ class PetServiceImplTest {
         mockUser.setUsername("isaac");
 
         PetDto mockDto = new PetDto();
-        mockDto.setPetName("Max");
-        mockDto.setPetType(PetType.TAMAGOTCHI);
+        mockDto.setName("Max");
+        mockDto.setType(PetType.TAMAGOTCHI);
 
         Pet expectedPet = new Pet();
         expectedPet.setPetId(123);
@@ -70,8 +70,8 @@ class PetServiceImplTest {
                 .orElseThrow(() -> new UsernameNotFoundException("User isaac not found in DB"));
 
         PetDto mockDto = new PetDto();
-        mockDto.setPetName("Max");
-        mockDto.setPetType(PetType.TAMAGOTCHI);
+        mockDto.setName("Max");
+        mockDto.setType(PetType.TAMAGOTCHI);
 
         Pet expectedPet = new Pet();
         expectedPet.setPetId(123);
@@ -101,8 +101,8 @@ class PetServiceImplTest {
 
         // 2. Prepara el PetDTO para la creación
         PetDto petDtoToCreate = new PetDto();
-        petDtoToCreate.setPetName("FirulaisConID");
-        petDtoToCreate.setPetType(PetType.ANIMAL);
+        petDtoToCreate.setName("FirulaisConID");
+        petDtoToCreate.setType(PetType.ANIMAL);
 
         // 3. Define el objeto Pet tal como se pasaría al método save (sin ID asignado por nosotros)
         //    y también el objeto Pet como se esperaría que fuera DEVUELTO por save() (con un ID).
@@ -116,8 +116,8 @@ class PetServiceImplTest {
         Pet petReturnedBySave = new Pet();
         // Copiamos las propiedades que createPet establece antes de llamar a save,
         // y luego le asignamos el ID simulado.
-        petReturnedBySave.setName(petDtoToCreate.getPetName());
-        petReturnedBySave.setType(petDtoToCreate.getPetType());
+        petReturnedBySave.setName(petDtoToCreate.getName());
+        petReturnedBySave.setType(petDtoToCreate.getType());
         petReturnedBySave.setUser(testUser);
         petReturnedBySave.setDob(LocalDateTime.now()); // Simular lo que hace createPet
         petReturnedBySave.setDaysOld(0);
@@ -143,7 +143,7 @@ class PetServiceImplTest {
         assertNotNull(createdPetResult, "El resultado de createPet no debería ser nulo.");
         // El ID debe ser el que simulamos que la BD generó y que nuestro mock de save devolvió.
         assertEquals(simulatedDbGeneratedId, createdPetResult.getPetId(), "El ID de la mascota creada no coincide.");
-        assertEquals(petDtoToCreate.getPetName(), createdPetResult.getName(), "El nombre de la mascota creada no coincide.");
+        assertEquals(petDtoToCreate.getName(), createdPetResult.getName(), "El nombre de la mascota creada no coincide.");
 
         // Opcional: Verificar que el objeto pasado a save no tenía ID (o era 0/null)
         Pet petPassedToSave = petArgumentCaptor.getValue();
@@ -161,7 +161,7 @@ class PetServiceImplTest {
         assertTrue(foundPetOptional.isPresent(), "Se esperaba encontrar la mascota con el ID " + simulatedDbGeneratedId);
         Pet foundPet = foundPetOptional.get();
         assertEquals(simulatedDbGeneratedId, foundPet.getPetId(), "El ID de la mascota encontrada no coincide.");
-        assertEquals(petDtoToCreate.getPetName(), foundPet.getName(), "El nombre de la mascota encontrada no coincide.");
+        assertEquals(petDtoToCreate.getName(), foundPet.getName(), "El nombre de la mascota encontrada no coincide.");
         assertNotNull(foundPet.getUser(), "La mascota encontrada debería tener un usuario asociado.");
         assertEquals(testUser.getUsername(), foundPet.getUser().getUsername(), "El nombre de usuario asociado a la mascota no coincide.");
 

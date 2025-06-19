@@ -86,8 +86,8 @@ class PetControllerIntegrationTest { // Renombrado para claridad
 
         // PetDTO para la creación
         PetDto petDtoToCreate = new PetDto();
-        petDtoToCreate.setPetName("IntegrationRex");
-        petDtoToCreate.setPetType(PetType.TAMAGOTCHI);
+        petDtoToCreate.setName("IntegrationRex");
+        petDtoToCreate.setType(PetType.TAMAGOTCHI);
 
         // Petición para crear la mascota, usando el token JWT
         // Asumo que tu endpoint de crear Pet es POST /pets y espera un userId en el header
@@ -102,7 +102,7 @@ class PetControllerIntegrationTest { // Renombrado para claridad
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(petDtoToCreate)))
                 .andExpect(status().isCreated()) // O isOk() dependiendo de tu implementación
-                .andExpect(jsonPath("$.petName", is(petDtoToCreate.getPetName())))
+                .andExpect(jsonPath("$.petName", is(petDtoToCreate.getName())))
                 .andReturn();
 
         String createPetResponse = createPetResult.getResponse().getContentAsString();
@@ -111,7 +111,7 @@ class PetControllerIntegrationTest { // Renombrado para claridad
         // Necesitas extraer el ID de la mascota creada de 'createPetResponse'.
         // Por ejemplo, si devuelves el Pet completo con su ID:
         PetDto createdPet = objectMapper.readValue(createPetResponse, PetDto.class);
-        Integer createdPetId = createdPet.getId(); // Asegúrate de que Pet tiene getPetId()
+        Integer createdPetId = createdPet.getPetId(); // Asegúrate de que Pet tiene getPetId()
 
         assertNotNull(createdPetId, "El ID de la mascota creada no debería ser nulo");
 
@@ -124,8 +124,8 @@ class PetControllerIntegrationTest { // Renombrado para claridad
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.petId", is(createdPetId)))
-                .andExpect(jsonPath("$.name", is(petDtoToCreate.getPetName())))
-                .andExpect(jsonPath("$.type", is(petDtoToCreate.getPetType().toString()))) // toString() para enums en JSON
+                .andExpect(jsonPath("$.name", is(petDtoToCreate.getName())))
+                .andExpect(jsonPath("$.type", is(petDtoToCreate.getType().toString()))) // toString() para enums en JSON
                 .andExpect(jsonPath("$.userId", is(testUser.getId()))); // Verifica el usuario asociado
         // Ajusta los jsonPath según la estructura exacta de tu respuesta Pet serializada
     }

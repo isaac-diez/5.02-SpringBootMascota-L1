@@ -9,10 +9,10 @@ public class PetMapper {
     public PetDto toDto(Pet pet) {
         PetDto dto = new PetDto();
         if (pet.getPetId() != null) {
-            dto.setId(pet.getPetId());
+            dto.setPetId(pet.getPetId());
         }
-        dto.setPetName(pet.getName());
-        dto.setPetType(pet.getType());
+        dto.setName(pet.getName());
+        dto.setType(pet.getType());
         dto.setHappyLevel(pet.getLevels().getHappy());
         dto.setEvolutionState(pet.getEvolutionState());
         dto.setUsername(pet.getUser().getUsername());
@@ -46,8 +46,8 @@ public class PetMapper {
 
     public Pet fromDto(PetDto dto) {
         Pet pet = new Pet();
-        pet.setName(dto.getPetName());
-        pet.setType(dto.getPetType());
+        pet.setName(dto.getName());
+        pet.setType(dto.getType());
         return pet;
     }
 }

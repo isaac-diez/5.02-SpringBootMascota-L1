@@ -17,13 +17,13 @@ public class PetDto implements Serializable {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 50, message = "El nombre no puede exceder 50 caracteres")
-    private String petName;
+    private String name;
 
     @NotNull(message = "El tipo de mascota es obligatorio")
-    private PetType petType;
+    private PetType type;
 
     @Schema(accessMode = Schema.AccessMode.READ_ONLY, description = "ID autogenerado de la mascota, solo presente en respuestas.")
-    private Integer id;
+    private Integer petId;
     private int happyLevel;
     private EvolutionState evolutionState;
     private String username;

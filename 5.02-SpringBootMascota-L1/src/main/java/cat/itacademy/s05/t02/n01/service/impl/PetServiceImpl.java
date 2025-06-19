@@ -74,8 +74,8 @@ public class PetServiceImpl implements PetService {
         }
 
         Pet pet = new Pet();
-        pet.setName(petDto.getPetName());
-        pet.setType(petDto.getPetType());
+        pet.setName(petDto.getName());
+        pet.setType(petDto.getType());
         pet.setUser(user);
         pet.setDob(LocalDateTime.now());
         pet.setDaysOld(0);
