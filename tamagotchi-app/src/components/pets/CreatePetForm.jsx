@@ -3,18 +3,19 @@ import { useAuth } from '../../context/AuthContext';
 
 const CreatePetForm = ({ onPetCreated, onCancel }) => {
     const { createPet } = useAuth();
-    const [petName, setPetName] = useState('');
-    const [petType, setPetType] = useState('TAMAGOTCHI');
+    const [name, setName] = useState(''); // FIX: Use `name` to match backend DTO
+    const [type, setType] = useState('KAWAI'); // FIX: Use `type` and default to KAWAI
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!petName.trim()) { setError('Pet name cannot be empty.'); return; }
+        if (!name.trim()) { setError('Pet name cannot be empty.'); return; }
         setIsSubmitting(true);
         setError('');
         try {
-            const newPet = await createPet({ petName, petType });
+            // FIX: Send `name` and `type` to match the backend PetDto
+            const newPet = await createPet({ name, type });
             onPetCreated(newPet);
         } catch (err) {
             setError('Could not create pet. Please try again.');
@@ -30,14 +31,14 @@ const CreatePetForm = ({ onPetCreated, onCancel }) => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label htmlFor="petName" className="text-sm font-bold block text-left mb-1">Give it a name</label>
-                        <input id="petName" type="text" value={petName} onChange={(e) => setPetName(e.target.value)} required className="tamagotchi-input" />
+                        <input id="petName" type="text" value={name} onChange={(e) => setName(e.target.value)} required className="tamagotchi-input" />
                     </div>
                     <div>
                         <label htmlFor="petType" className="text-sm font-bold block text-left mb-1">Choose its type</label>
-                        <select id="petType" value={petType} onChange={(e) => setPetType(e.target.value)} className="tamagotchi-input">
-                            <option value="TAMAGOTCHI">Tamagotchi (Retro)</option>
-                            <option value="POKEMON">Pokemon (Anime)</option>
-                            <option value="ANIMAL">Animal (Kawai)</option>
+                        <select id="petType" value={type} onChange={(e) => setType(e.target.value)} className="tamagotchi-input">
+                            <option value="KAWAI">Kawai Animal</option>
+                            <option value="POKEMON">Collectible Monster</option>
+                            <option value="TAMAGOTCHI">Digital Pet</option>
                         </select>
                     </div>
                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
