@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthForm from '../components/auth/AuthForm';
+import AuthLayout from '../components/layout/AuthLayout'; // <-- Import the new layout
 
 const LoginPage = () => {
     const { login } = useAuth();
@@ -22,14 +23,14 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-            <AuthForm
-                isRegister={false}
-                onSubmit={handleLogin}
-                error={error}
-                loading={loading}
-            />
-        </div>
+        <AuthLayout>
+                <AuthForm
+                    isRegister={false}
+                    onSubmit={handleLogin}
+                    error={error}
+                    loading={loading}
+                />
+        </AuthLayout>
     );
 };
 

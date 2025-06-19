@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthForm from '../components/auth/AuthForm';
+import AuthLayout from '../components/layout/AuthLayout'; // <-- Import the new layout
+
 
 const RegisterPage = () => {
     const { register } = useAuth();
@@ -26,14 +28,14 @@ const RegisterPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+        <AuthLayout>
             <AuthForm
                 isRegister={true}
                 onSubmit={handleRegister}
                 error={error}
                 loading={loading}
             />
-        </div>
+        </AuthLayout>
     );
 };
 
