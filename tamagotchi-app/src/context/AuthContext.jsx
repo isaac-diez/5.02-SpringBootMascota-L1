@@ -14,21 +14,23 @@ const parseJwt = (token) => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  // FIXED: Added the missing [token, setToken] variable names
   const [token, setToken] = useState(() => localStorage.getItem('jwtToken'));
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (token) {
-      const decodedToken = parseJwt(token);
+    const storedToken = localStorage.getItem('jwtToken');
+    if (storedToken) {
+      const decodedToken = parseJwt(storedToken);
       if (decodedToken && decodedToken.exp * 1000 > Date.now()) {
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${storedToken}`;
         setUser({ username: decodedToken.sub, role: decodedToken.role });
       } else {
         localStorage.removeItem('jwtToken');
-        setToken(null);
       }
     }
-  }, [token]);
+    setIsLoading(false);
+  }, []); // Note: This useEffect should only run once on initial load.
 
   const login = async (username, password) => {
     try {
@@ -36,8 +38,19 @@ export const AuthProvider = ({ children }) => {
       if (response.data && response.data.token) {
         const newToken = response.data.token;
         localStorage.setItem('jwtToken', newToken);
-        setToken(newToken);
-        navigate('/pets');
+        apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+        const decodedToken = parseJwt(newToken);
+
+        // NEW: Set the user state immediately upon login.
+        // This solves the race condition where navigation happens before the user state is updated.
+        setUser({ username: decodedToken.sub, role: decodedToken.role });
+        setToken(newToken); // Store token to maintain session across reloads
+
+        if (decodedToken && decodedToken.role && decodedToken.role === 'ROLE_ADMIN') {
+          navigate('/admin');
+        } else {
+          navigate('/pets');
+        }
       }
     } catch (error) {
       console.error("Login failed:", error);
@@ -46,12 +59,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const register = async (username, password) => {
-    try {
       await apiClient.post('/auth/register', { username, password });
-    } catch (error) {
-      console.error("Registration failed:", error);
-      throw error;
-    }
+      await login(username, password);
   };
 
   const createPet = async (petData) => {
@@ -68,12 +77,13 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.removeItem('jwtToken');
+    delete apiClient.defaults.headers.common['Authorization'];
     navigate('/login');
   };
 
   const contextValue = useMemo(
-    () => ({ token, user, isAuthenticated: !!token, login, logout, register, createPet }),
-    [token, user]
+    () => ({ token, user, isLoading, login, logout, register, createPet }),
+    [token, user, isLoading]
   );
 
   return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;
