@@ -64,7 +64,7 @@ const AdminPage = () => {
   const handleDeleteUser = async (userId, username) => {
     if (window.confirm(`Are you sure you want to delete ${username}? This will also delete their pets.`)) {
       try {
-        await apiClient.delete(`/user/${userId}`);
+        await apiClient.delete(`/user/delete/${userId}`);
         setUsers(currentUsers => currentUsers.filter(user => user.id_user !== userId));
         setPets(currentPets => currentPets.filter(pet => pet.username !== username));
       } catch (err) {
@@ -76,7 +76,7 @@ const AdminPage = () => {
   const handleDeletePet = async (petId) => {
     if (window.confirm(`Are you sure you want to delete this pet?`)) {
       try {
-        await apiClient.delete(`/pet/${petId}`);
+        await apiClient.delete(`pet/delete/${petId}`);
         setPets(currentPets => currentPets.filter(pet => pet.petId !== petId));
       } catch (err) {
         alert('Error: Could not delete the pet.');
