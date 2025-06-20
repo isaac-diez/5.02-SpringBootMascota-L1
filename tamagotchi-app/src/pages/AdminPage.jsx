@@ -33,8 +33,8 @@ const AdminPage = () => {
       setLoading(true);
       setError('');
       const [usersResponse, petsResponse] = await Promise.all([
-        apiClient.get('/user/getAll'),
-        apiClient.get('/pet/getAll')
+        apiClient.get('/admin/users/all'),
+        apiClient.get('/admin/pets/all')
       ]);
 
       // --- FIX ---
