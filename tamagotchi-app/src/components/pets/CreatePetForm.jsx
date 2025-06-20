@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 const CreatePetForm = ({ onPetCreated, onCancel }) => {
     const { createPet } = useAuth();
     const [name, setName] = useState(''); // FIX: Use `name` to match backend DTO
-    const [type, setType] = useState('KAWAI'); // FIX: Use `type` and default to KAWAI
+    const [type, setType] = useState('ANIMAL'); // FIX: Use `type` and default to ANIMAL
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,9 +36,9 @@ const CreatePetForm = ({ onPetCreated, onCancel }) => {
                     <div>
                         <label htmlFor="petType" className="text-sm font-bold block text-left mb-1">Choose its type</label>
                         <select id="petType" value={type} onChange={(e) => setType(e.target.value)} className="tamagotchi-input">
-                            <option value="KAWAI">Kawai Animal</option>
-                            <option value="POKEMON">Collectible Monster</option>
-                            <option value="TAMAGOTCHI">Digital Pet</option>
+                            <option value="ANIMAL">Kawai Animal</option>
+                            <option value="POKEMON">Pokemon</option>
+                            <option value="TAMAGOTCHI">Tamagotchi</option>
                         </select>
                     </div>
                     {error && <p className="text-red-500 text-sm text-center">{error}</p>}
