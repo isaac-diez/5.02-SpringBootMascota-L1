@@ -33,8 +33,6 @@ public class PetServiceImpl implements PetService {
     public void updateAllPetsPassiveStates() {
         log.info("Ejecutando tarea programada: Actualizando estados pasivos de las mascotas...");
 
-        // 1. Obtener todas las mascotas que necesitan ser actualizadas.
-        //    Para empezar, podemos obtener todas las que no estén muertas.
         List<Pet> activePets = petRepo.findAllByEvolutionStateNot(EvolutionState.DEAD);
 
         if (activePets.isEmpty()) {
@@ -42,23 +40,16 @@ public class PetServiceImpl implements PetService {
             return;
         }
 
-        // 2. Iterar sobre cada mascota y aplicar la lógica de degradación.
         for (Pet pet : activePets) {
             try {
                 log.trace("Actualizando mascota con ID: {}", pet.getPetId());
 
-                // La lógica que ya tienes, ahora aplicada a cada mascota en el bucle.
-                pet.updateNeeds();         // Degrada los niveles (hambre, energía, etc.).
-                pet.updateDerivedStates(); // Actualiza los enums (HappinessState, HealthState, etc.).
+                pet.updateNeeds();
+                pet.updateDerivedStates();
 
-                // 3. Guardar la mascota actualizada.
-                //    Como el method es @Transactional, los cambios en las entidades gestionadas
-                //    podrían guardarse al final de la transacción sin una llamada explícita a save().
-                //    Sin embargo, llamar a save() es más explícito y no hace daño.
                 petRepo.save(pet);
 
             } catch (Exception e) {
-                // Captura de errores para una mascota específica para no detener todo el proceso.
                 log.error("Error al actualizar la mascota con ID {}: {}", pet.getPetId(), e.getMessage());
             }
         }
@@ -140,32 +131,12 @@ public class PetServiceImpl implements PetService {
         petRepo.deleteById(id_pet);
     }
 
-//    @Override
-//    public Optional<Pet> play(int id_pet) {
-//        Optional<Pet> petOptional = getPetById(id_pet);
-//        Pet pet = new Pet();
-//        if (petOptional.isPresent()) {
-//            pet = petOptional.get();
-//        } else {
-//            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
-//        }
-//
-//        pet.applyPlayingEffects();
-//        pet.updateDerivedStates();
-//
-//        petRepo.save(pet);
-//
-//        return petRepo.findById(id_pet);
-//
-//    }
-
     @Override
     @Transactional
     public Pet play(Integer petId, Principal principal) {
         Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applyPlayingEffects();
         pet.updateDerivedStates();
-//        createAndSaveEvent(pet, EventType.PLAY);
         return petRepo.save(pet);
     }
 
@@ -184,27 +155,8 @@ public class PetServiceImpl implements PetService {
         Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applyFeedingEffects();
         pet.updateDerivedStates();
-//        createAndSaveEvent(pet, EventType.PLAY);
         return petRepo.save(pet);
     }
-
-//    @Override
-//    public Optional<Pet> feed(int id_pet) {
-//        Optional<Pet> petOptional = getPetById(id_pet);
-//        Pet pet = new Pet();
-//        if (petOptional.isPresent()) {
-//            pet = petOptional.get();
-//        } else {
-//            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
-//        }
-//
-//        pet.applyFeedingEffects();
-//
-//        petRepo.save(pet);
-//
-//        return petRepo.findById(id_pet);
-//
-//    }
 
     @Override
     @Transactional
@@ -212,27 +164,9 @@ public class PetServiceImpl implements PetService {
         Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applySleepEffects();
         pet.updateDerivedStates();
-//        createAndSaveEvent(pet, EventType.PLAY);
         return petRepo.save(pet);
     }
 
-//    @Override
-//    public Optional<Pet> sleep(int id_pet) {
-//        Optional<Pet> petOptional = getPetById(id_pet);
-//        Pet pet = new Pet();
-//        if (petOptional.isPresent()) {
-//            pet = petOptional.get();
-//        } else {
-//            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
-//        }
-//
-//        pet.applySleepEffects();
-//
-//        petRepo.save(pet);
-//
-//        return petRepo.findById(id_pet);
-//
-//    }
 
     @Override
     @Transactional
@@ -240,26 +174,9 @@ public class PetServiceImpl implements PetService {
         Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applyMedicineEffects();
         pet.updateDerivedStates();
-//        createAndSaveEvent(pet, EventType.PLAY);
         return petRepo.save(pet);
     }
 
-//    @Override
-//    public Optional<Pet> giveMeds(int id_pet) {
-//        Optional<Pet> petOptional = getPetById(id_pet);
-//        Pet pet = new Pet();
-//        if (petOptional.isPresent()) {
-//            pet = petOptional.get();
-//        } else {
-//            throw new PetNotFoundException("The Pet with id" + id_pet + "is not found in the DB");
-//        }
-//
-//        pet.applyMedicineEffects();
-//
-//        petRepo.save(pet);
-//
-//        return petRepo.findById(id_pet);
-//    }
 
     @Override
     @Transactional
@@ -267,20 +184,7 @@ public class PetServiceImpl implements PetService {
         Pet pet = getPetAndVerifyOwnership(petId, principal);
         pet.applyCleaningEffects();
         pet.updateDerivedStates();
-//        createAndSaveEvent(pet, EventType.PLAY);
         return petRepo.save(pet);
     }
 
-//    private void createAndSaveEvent(Pet pet, EventType eventType) {
-//        Event newEvent = new Event(EventType.FOOD, pet.getPetId());
-//        newEvent.setType(eventType);
-//        newEvent.setPet_id(pet.getPetId());
-//
-//        eventRepo.save(newEvent); // Persiste el nuevo evento
-//
-//        // Opcional: podrías añadir el nuevo evento a la lista de eventos de la mascota
-//        // si la relación está configurada para ello y la necesitas actualizada en memoria.
-//        // pet.getEventList().add(newEvent);
-//
-//    }
 }

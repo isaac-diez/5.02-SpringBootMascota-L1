@@ -65,18 +65,14 @@ public class SecurityConfig {
                 .exceptionHandling(exceptions ->
                         exceptions
                                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                                // Forma correcta para el AccessDeniedHandler:
+
                                 .accessDeniedHandler((request, response, accessDeniedException) -> {
                                     response.setStatus(HttpServletResponse.SC_FORBIDDEN); // HttpStatus.FORBIDDEN.value()
-                                    // Opcionalmente, puedes escribir un mensaje en el cuerpo:
-                                    // response.setContentType("application/json;charset=UTF-8");
-                                    // response.getWriter().write("{\"error\": \"Access Denied\", \"message\": \"" + accessDeniedException.getMessage() + "\"}");
                                 })
                 )
                 .build();
     }
 
-    // NUEVO BEAN: Para que Spring Security IGNORE completamente los paths de Swagger
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web.ignoring().requestMatchers(
@@ -84,7 +80,6 @@ public class SecurityConfig {
                 "/v3/api-docs/**",
                 "/swagger-ui.html",
                 "/api-docs/**"
-                // Puedes añadir otros paths de recursos estáticos aquí si es necesario
         );
     }
 

@@ -67,7 +67,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Si la petición es para una URL pública, la pasamos directamente sin procesar JWT
         if (publicUrls.matches(request)) {
             log.trace("Request for public URL {} - skipping JWT processing.", request.getRequestURI());
             filterChain.doFilter(request, response);
@@ -85,13 +84,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             jwt = authHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwt);
-                // Asumimos que jwtUtil.extractRole() devuelve el rol como "ROLE_USER", "ROLE_ADMIN", etc.
-                // o "USER", "ADMIN" y luego se le añade el prefijo.
-                // Sé consistente con lo que generateToken() guarda y extractRole() devuelve.
+
                 role = jwtUtil.extractRole(jwt);
             } catch (ExpiredJwtException e) {
                 log.warn("JWT Token has expired for URI {}: {}", request.getRequestURI(), e.getMessage());
-                // No envíes respuesta aquí, deja que el AuthenticationEntryPoint lo maneje
+
             } catch (UnsupportedJwtException e) {
                 log.warn("Unsupported JWT Token for URI {}: {}", request.getRequestURI(), e.getMessage());
             } catch (MalformedJwtException e) {
@@ -106,26 +103,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         if (username != null && role != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Si confías en el token (firma y expiración validadas por jwtUtil.extractUsername/extractRole)
-            // puedes crear la autenticación directamente con el rol del token.
-            // Para una validación más estricta (ej. verificar si el usuario aún existe o si sus roles han cambiado en la BD),
-            // deberías cargar UserDetails aquí.
 
-            // Ejemplo de carga desde UserDetails (más seguro si los roles pueden cambiar o el usuario ser deshabilitado):
-            // UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            // if (jwtUtil.validateToken(jwt, userDetails)) { // Necesitarías un método validateToken que también compare con UserDetails
-            //    Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-            //    UsernamePasswordAuthenticationToken authenticationToken =
-            //            new UsernamePasswordAuthenticationToken(userDetails, null, authorities);
-            //    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            //    log.debug("User '{}' authenticated from JWT and UserDetails.", username);
-            // }
-
-            // Ejemplo simplificado confiando en el rol del token (asegúrate que jwtUtil.extractRole es fiable):
-            // Y que el rol ya tiene el prefijo "ROLE_" o lo añades.
-            // Si extractRole devuelve "USER", necesitarías "ROLE_" + role.
-            // Si extractRole devuelve "ROLE_USER", entonces solo role.
-            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role); // Asume que 'role' ya es "ROLE_X"
+            SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
             Collection<? extends GrantedAuthority> authorities = Collections.singletonList(authority);
 
             UsernamePasswordAuthenticationToken authenticationToken =
