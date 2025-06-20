@@ -56,10 +56,8 @@ class JwtUtilTest_ValidateToken {
 
     @Test
     void validToken_ShouldAuthenticate() throws Exception {
-        // 1. Prepara token válido
         String token = jwtUtil.generateToken("testuser", "ROLE_USER");
 
-        // 3. Ejecuta petición con token
         mockMvc.perform(get("/user/hello")
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk());

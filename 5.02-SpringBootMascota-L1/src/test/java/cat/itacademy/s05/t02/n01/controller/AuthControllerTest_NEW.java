@@ -1,8 +1,6 @@
 package cat.itacademy.s05.t02.n01.controller;
 
 import cat.itacademy.s05.t02.n01.dto.LoginRequest;
-import cat.itacademy.s05.t02.n01.dto.LoginResponse;
-import cat.itacademy.s05.t02.n01.model.User;
 import cat.itacademy.s05.t02.n01.Repo.UserRepo;
 import cat.itacademy.s05.t02.n01.security.JwtRequestFilter;
 import cat.itacademy.s05.t02.n01.security.JwtUtil;
@@ -11,7 +9,6 @@ import jakarta.servlet.ServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -47,13 +44,11 @@ class AuthControllerTest_NEW {
     void setup() {
         MockitoAnnotations.openMocks(this);
         jwtUtil = new JwtUtil();
-        // Inyecta jwtUtil manualmente porque no usamos Spring Context
         authController.jwtUtil = jwtUtil;
     }
 
     @Test
     void login_ShouldReturnJwtToken() {
-        // Arrange
         LoginRequest request = new LoginRequest();
         request.setUsername("testuser");
         request.setPassword("testpass");
@@ -61,16 +56,12 @@ class AuthControllerTest_NEW {
         UserDetails userDetails = new org.springframework.security.core.userdetails.User("testuser", "testpass",
                 Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
 
-        // Simula autenticacion sin error
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).
                 thenReturn(null);
-        // Devuelve userDetails esperado
         when(userService.loadUserByUsername("testuser")).thenReturn(userDetails);
 
-        // Act
         var responseEntity = authController.login(request);
 
-        // Assert
         assertNotNull(responseEntity);
         assertEquals(200, responseEntity.getStatusCodeValue());
         assertNotNull(responseEntity.getBody());
@@ -81,14 +72,11 @@ class AuthControllerTest_NEW {
 
     @Test
     void jwtRequestFilter_ShouldAllowValidToken() throws Exception {
-        // Arrange
         String username = "testuser";
         String role = "ROLE_USER";
 
-        // Genera token válido con JwtUtil
         String token = jwtUtil.generateToken(username, role);
 
-        // Prepara mock request con header Authorization Bearer token
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getHeader("Authorization")).thenReturn("Bearer " + token);
 
@@ -101,15 +89,12 @@ class AuthControllerTest_NEW {
 
         JwtRequestFilter jwtRequestFilter = new JwtRequestFilter(jwtUtil, userService);
 
-        // Mock para cargar usuario dentro del filtro
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(username, "ignored-password",
                 Collections.singletonList(new SimpleGrantedAuthority(role)));
         when(userService.loadUserByUsername(username)).thenReturn(userDetails);
 
-        // Act: pasa por el filtro
         jwtRequestFilter.doFilter(request, response, filterChain);
 
-        // Assert: verifica que el filtro continúe la cadena
         verify(filterChain, times(1)).doFilter(request, response);
     }
 }

@@ -20,11 +20,9 @@ class JwtUtilTest {
 
         String role = userDetails.getAuthorities().iterator().next().getAuthority();
 
-        // 2. Genera token
         String token = jwtUtil.generateToken(userDetails.getUsername(), role);
         System.out.println(token);
 
-        // 3. Verificaciones
         assertNotNull(token);
         assertTrue(token.length() > 30); // Verifica longitud mínima
         assertTrue(jwtUtil.validateToken(token));
