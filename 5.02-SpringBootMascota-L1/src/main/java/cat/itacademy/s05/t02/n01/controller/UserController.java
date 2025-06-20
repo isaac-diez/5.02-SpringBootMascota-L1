@@ -39,18 +39,18 @@ public class UserController {
         return userService.createUser(registerDto.getUsername(), registerDto.getPassword());
     }
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<User> userList = userService.getAllUsers();
-        if (userList.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
-            List<UserDto> userDtoList = userList.stream()
-                    .map(userMapper::toDto)
-                    .toList();
-            return ResponseEntity.ok(userDtoList);
-        }
-    }
+//    @GetMapping("/getAll")
+//    public ResponseEntity<List<UserDto>> getAllUsers() {
+//        List<User> userList = userService.getAllUsers();
+//        if (userList.isEmpty()) {
+//            return ResponseEntity.noContent().build();
+//        } else {
+//            List<UserDto> userDtoList = userList.stream()
+//                    .map(userMapper::toDto)
+//                    .toList();
+//            return ResponseEntity.ok(userDtoList);
+//        }
+//    }
 
 
     @DeleteMapping("delete/{id_user}")
