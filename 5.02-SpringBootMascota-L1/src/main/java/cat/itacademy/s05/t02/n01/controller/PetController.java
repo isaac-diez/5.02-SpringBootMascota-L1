@@ -46,13 +46,13 @@ public class PetController {
     @PostMapping("/new")
     public ResponseEntity<PetDto> createPet(
             @Valid @RequestBody PetDto petDto,
-            Principal principal) { // Spring inyectará el Principal si el usuario está autenticado
+            Principal principal) {
 
         String username = principal.getName();
-        User user = userRepo.findByUsername(username) // O un userService.findByUsername(username)
+        User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
-        Pet createdPet = petService.createPet(user, petDto); // petService.createPet ya acepta un User
+        Pet createdPet = petService.createPet(user, petDto);
         PetDto responseDto = petMapper.toDto(createdPet);
         return ResponseEntity.created(URI.create("/pet/" + createdPet.getPetId()))
                 .body(responseDto);
@@ -64,11 +64,6 @@ public class PetController {
         Optional<Pet> petOptional = petService.getPetById(id_pet);
         if (petOptional.isPresent()) {
             Pet pet = petOptional.get();
-//            PetDetailResponseDto dto = new PetDetailResponseDto();
-//            dto.setPetId(pet.getPetId());
-//            dto.setName(pet.getName());
-//            if (pet.getType() != null) dto.setType(PetType.valueOf(pet.getType().name()));
-//            if (pet.getEvolutionState() != null) dto.setEvolutionState(EvolutionState.valueOf(pet.getEvolutionState().name()));
 
             return ResponseEntity.ok(petMapper.toDetailDto(pet));
         } else {

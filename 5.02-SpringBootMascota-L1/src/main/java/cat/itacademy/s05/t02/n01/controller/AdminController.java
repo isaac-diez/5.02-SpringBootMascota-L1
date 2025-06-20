@@ -43,7 +43,6 @@ public class AdminController {
             return ResponseEntity.noContent().build();
         }
 
-        // Mapear la lista completa a DTOs
         List<PetDto> allPetsDto = allPets.stream()
                 .map(petMapper::toDto)
                 .collect(Collectors.toList());

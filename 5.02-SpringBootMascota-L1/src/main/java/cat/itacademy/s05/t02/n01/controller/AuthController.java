@@ -1,6 +1,5 @@
 package cat.itacademy.s05.t02.n01.controller;
 
-import cat.itacademy.s05.t02.n01.Repo.UserRepo;
 import cat.itacademy.s05.t02.n01.dto.LoginRequest;
 import cat.itacademy.s05.t02.n01.dto.LoginResponse;
 import cat.itacademy.s05.t02.n01.exception.UsernameAlreadyInDataBaseException;
@@ -17,7 +16,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
