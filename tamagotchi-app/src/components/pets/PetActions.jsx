@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import apiClient from '../../api/apiClient';
 
-const PetActions = ({ petId, onAction }) => {
+const PetActions = ({ pet, onAction }) => {
   const [loadingAction, setLoadingAction] = useState(null); // To show loading state per button
   const [actionError, setActionError] = useState('');
+  const isDead = pet.evolutionState === 'DEAD' || pet.healthState === 'DEAD';
 
   const handleAction = async (action) => {
     setLoadingAction(action); // e.g., 'feed', 'play'
     setActionError('');
     try {
       // This calls the correct endpoint, e.g., POST /pet/25/feed
-      const response = await apiClient.post(`/pet/${petId}/${action}`);
+      const response = await apiClient.post(`/pet/${pet.petId}/${action}`);
       onAction(response.data); // Calls handlePetUpdate in the parent with the new pet data
     } catch (err) {
       console.error(`Error performing action '${action}':`, err);
@@ -32,7 +33,7 @@ const PetActions = ({ petId, onAction }) => {
           <button
             key={action}
             onClick={() => handleAction(action)}
-            disabled={!!loadingAction} // Disable all buttons while any action is in progress
+            disabled={!!loadingAction || isDead} // Disable all buttons while any action is in progress
             className={`btn capitalize ${loadingAction === action ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {loadingAction === action ? '...' : action}
