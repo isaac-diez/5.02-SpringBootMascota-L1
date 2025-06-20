@@ -13,7 +13,7 @@ const PetImage = ({ pet }) => {
     ? pet.type.toLowerCase()
     : 'tamagotchi';
 
-  const validStates = ['strong', 'fit', 'ok', 'sick', 'dead'];
+  const validStates = ['strong', 'fit', 'ok', 'weak', 'sick', 'dead'];
   let healthStateFile = pet.healthState ? pet.healthState.toLowerCase() : 'ok';
   if (!validStates.includes(healthStateFile)) {
     healthStateFile = 'ok';

@@ -64,7 +64,7 @@ const PetDetailPage = () => {
                     {/* Right Column for Stats and Actions */}
                     <div className="space-y-8 w-full">
                         <PetStats pet={pet} />
-                        <PetActions petId={pet.petId} onAction={handlePetUpdate} />
+                        <PetActions pet={pet} onAction={handlePetUpdate} />
                     </div>
                 </div>
             </main>

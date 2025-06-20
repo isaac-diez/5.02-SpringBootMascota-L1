@@ -8,11 +8,11 @@ import CreatePetForm from '../components/pets/CreatePetForm';
 // This is the same function from AdminPage. It derives the 'healthState' string
 // that your PetImage component needs from the data we have available.
 const deriveHealthState = (pet) => {
-  if (pet.evolutionState === 'DEAD') return 'dead';
-  if (pet.healthLevel < 10) return 'sick';
-  if (pet.healthLevel < 30) return 'weak';
-  if (pet.healthLevel < 65) return 'ok';
-  if (pet.healthLevel < 85) return 'fit';
+  if (pet.healthState === 'DEAD') return 'dead';
+  if (pet.healthState === 'SICK') return 'sick';
+  if (pet.healthState === 'WEAK') return 'weak';
+  if (pet.healthState === 'OK') return 'ok';
+  if (pet.healthState === 'FIT') return 'fit';
   return 'strong';
 };
 
