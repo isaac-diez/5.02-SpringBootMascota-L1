@@ -113,18 +113,14 @@ public class Pet {
     private static final int AGE_THRESHOLD_ADULT = 15;
     private static final int AGE_THRESHOLD_SENIOR = 20;
 
-    // Modificadores y bonificaciones
+
     private static final double SICKNESS_PENALTY_MULTIPLIER = 1.5;
     public void updateNeeds() {
-        // Si la mascota está muerta, no necesita actualizar sus necesidades.
+
         if (this.evolutionState == EvolutionState.DEAD) {
             return;
         }
 
-        // --- FASE 1: CÁLCULO DE TASAS Y BONIFICACIONES ---
-        // Las tasas de cambio pueden variar según el estado actual de la mascota.
-
-        // Modificadores basados en la evolución
         double hungerRateModifier = 1.0;
         double energyRateModifier = 1.0;
         switch (this.evolutionState) {
@@ -145,21 +141,16 @@ public class Pet {
         int currentHealthDecrease = BASE_PASSIVE_HEALTH_DECREASE;
         int naturalHygieneRecovery = 0;
 
-        // Bonificación por estar "Saludable y Feliz"
         if (this.levels.getHealth() > HEALTH_THRESHOLD_VERY_HIGH && this.levels.getHappy() > HAPPINESS_THRESHOLD_VERY_HIGH) {
-            // La energía disminuye más lentamente
+
             currentEnergyDecrease = (int) (currentEnergyDecrease * 0.5); // 50% más lento
         }
 
-        // Bonificación por "Recuperación Natural"
         if (this.levels.getHappy() > HAPPINESS_THRESHOLD_VERY_HIGH && this.levels.getHygiene() < (HYGIENE_THRESHOLD_LOW + 10)) {
-            // Si está muy feliz pero un poco sucio, tiene una pequeña recuperación de higiene
+
             naturalHygieneRecovery = 1;
         }
 
-
-        // --- FASE 2: DEGRADACIÓN PASIVA BASE ---
-        // Se aplican los cambios básicos calculados en la Fase 1.
 
         this.levels.setHungry(this.levels.getHungry() + currentHungerIncrease);
         this.levels.setHygiene(this.levels.getHygiene() - currentHygieneDecrease + naturalHygieneRecovery);
@@ -170,11 +161,9 @@ public class Pet {
         }
 
 
-        // --- FASE 3: CÁLCULO DE PENALIZACIONES (EFECTOS EN CASCADA Y COMBINADOS) ---
         int happinessPenalty = 0;
         int healthPenalty = 0;
 
-        // Penalización por HAMBRE ALTA
         if (this.levels.getHungry() > HUNGER_THRESHOLD_CRITICAL) {
             happinessPenalty += 15;
             healthPenalty += 5;
@@ -182,7 +171,6 @@ public class Pet {
             happinessPenalty += 5;
         }
 
-        // Penalización por HIGIENE BAJA
         if (this.levels.getHygiene() < HYGIENE_THRESHOLD_CRITICAL) {
             happinessPenalty += 10;
             healthPenalty += 15;
@@ -190,7 +178,6 @@ public class Pet {
             healthPenalty += 5;
         }
 
-        // Penalización por ENERGÍA BAJA
         if (this.levels.getEnergy() < ENERGY_THRESHOLD_CRITICAL) {
             happinessPenalty += 8;
             healthPenalty += 8;
@@ -198,7 +185,6 @@ public class Pet {
             happinessPenalty += 3;
         }
 
-        // *** EFECTOS COMBINADOS ***
 
         if (this.levels.getHungry() > HUNGER_THRESHOLD_HIGH && this.levels.getHygiene() < HYGIENE_THRESHOLD_LOW) {
             healthPenalty += 20;
@@ -213,16 +199,10 @@ public class Pet {
             healthPenalty += 25;
         }
 
-        // Modificador por estar ENFERMO
-        // Si la mascota está enferma (determinado por su HealthState), las penalizaciones son mayores.
         if (this.healthState == HealthState.SICK) {
             happinessPenalty = (int) (happinessPenalty * SICKNESS_PENALTY_MULTIPLIER);
             healthPenalty = (int) (healthPenalty * SICKNESS_PENALTY_MULTIPLIER);
         }
-
-
-        // --- FASE 4: APLICACIÓN DE CAMBIOS Y LÍMITES ---
-        // Se aplican las penalizaciones y se asegura que los valores se mantengan en el rango [0, 100].
 
         this.levels.setHappy(Math.max(0, this.levels.getHappy() - happinessPenalty));
         this.levels.setHealth(Math.max(0, this.levels.getHealth() - healthPenalty));
@@ -237,11 +217,11 @@ public class Pet {
             throw new PetNotHungryException("The pet is not hungry");
         }
 
-        this.levels.health = Math.min(100, this.levels.health + 10);
-        this.levels.hungry = Math.max(0, this.levels.hungry - 20);
-        this.levels.energy = Math.min(100, this.levels.energy + 20);
-        this.levels.hygiene = Math.max(0, this.levels.hygiene - 5);
-        this.levels.happy = Math.min(100, this.levels.happy + 10);
+        this.levels.setHealth(Math.min(100, this.levels.health + 10));
+        this.levels.setHungry(Math.max(0, this.levels.hungry - 20));
+        this.levels.setEnergy(Math.min(100, this.levels.energy + 20));
+        this.levels.setHygiene(Math.max(0, this.levels.hygiene - 5));
+        this.levels.setHappy(Math.min(100, this.levels.happy + 10));
 
         if (this.levels.hungry < 30 && this.levels.happy < 50) {
             this.levels.happy += 10;
@@ -250,6 +230,8 @@ public class Pet {
         this.isSleeping = false;
 
         this.lastFedTime = LocalDateTime.now();
+
+        updateDerivedStates();
     }
 
     public void applyPlayingEffects() { // Aumenta felicidad, reduce energía.
@@ -257,31 +239,35 @@ public class Pet {
             throw new PetTooTiredException("The pet too tired to play");
         }
 
-        this.levels.health = Math.min(100, this.levels.health + 15);
-        this.levels.hungry = Math.min(100, this.levels.hungry + 20);
-        this.levels.happy = Math.min(100, this.levels.happy + 30);
-        this.levels.energy = Math.max(0, this.levels.energy - 20);
-        this.levels.hygiene = Math.max(0, this.levels.hygiene - 10);
+        this.levels.setHealth(Math.min(100, this.levels.health + 15));
+        this.levels.setHungry(Math.min(100, this.levels.hungry + 20));
+        this.levels.setHappy(Math.min(100, this.levels.happy + 30));
+        this.levels.setEnergy(Math.max(0, this.levels.energy - 20));
+        this.levels.setHygiene(Math.max(0, this.levels.hygiene - 10));
 
         this.isSleeping = false;
 
         this.lastPlayedTime = LocalDateTime.now();
+
+        updateDerivedStates();
     }
 
     public void applyMedicineEffects() {
-        if (!isSick) {
-            throw new PetNotSickException("The pet is not sick");
+        if (!this.isSick) {
+            throw new PetNotSickException("The pet is not sick and cannot receive medicine.");
         }
 
-        this.levels.health = Math.min(100, this.levels.health + 30);
-        this.levels.happy = Math.min(100, this.levels.hungry + 25);
-        this.levels.hungry = Math.min(100, this.levels.hungry + 10);
-        this.levels.happy = Math.min(100, this.levels.happy + 20);
-        this.levels.energy = Math.min(100, this.levels.energy + 20);
+
+        this.levels.setHealth(Math.min(100, this.levels.getHealth() + 40));
+        this.levels.setHappy(Math.min(100, this.levels.getHappy() + 15));
+        this.levels.setHungry(Math.min(100, this.levels.hungry + 10));
+        this.levels.setEnergy(Math.min(100, this.levels.getEnergy() + 10));
+        this.levels.setHygiene(Math.max(0, this.levels.hygiene - 5));
 
         this.isSleeping = false;
-
         this.LastMedGivenTime = LocalDateTime.now();
+
+        updateDerivedStates();
     }
 
     public void applySleepEffects() {
@@ -289,15 +275,17 @@ public class Pet {
             throw new PetNotTiredEnoughException("The pet is not tired enough to sleep");
         }
 
-        this.levels.health = Math.min(100, this.levels.health + 10);
-        this.levels.hungry = Math.min(100, this.levels.hungry + 20);
-        this.levels.happy = Math.min(100, this.levels.happy + 20);
-        this.levels.energy = Math.min(100, this.levels.energy + 50);
-        this.levels.hygiene = Math.max(0, this.levels.hygiene - 10);
+        this.levels.setHealth(Math.min(100, this.levels.health + 10));
+        this.levels.setHungry(Math.min(100, this.levels.hungry + 20));
+        this.levels.setHappy(Math.min(100, this.levels.happy + 20));
+        this.levels.setEnergy(Math.min(100, this.levels.energy + 50));
+        this.levels.setHygiene(Math.max(0, this.levels.hygiene - 10));
 
         this.isSleeping = true;
 
         this.lastSleptTime = LocalDateTime.now();
+
+        updateDerivedStates();
     }
 
     public void applyCleaningEffects() {
@@ -305,15 +293,17 @@ public class Pet {
             throw new PetNotDirtyEnoughException("The pet is not dirty enough");
         }
 
-        this.levels.health = Math.min(100, this.levels.health + 25);
-        this.levels.hungry = Math.min(100, this.levels.hungry + 10);
-        this.levels.happy = Math.min(100, this.levels.happy + 15);
-        this.levels.energy = Math.min(100, this.levels.energy + 20);
-        this.levels.hygiene = Math.min(100, this.levels.hygiene + 50);
+        this.levels.setHealth(Math.min(100, this.levels.health + 25));
+        this.levels.setHungry(Math.min(100, this.levels.hungry + 10));
+        this.levels.setHappy(Math.min(100, this.levels.happy + 15));
+        this.levels.setEnergy(Math.min(100, this.levels.energy + 20));
+        this.levels.setHygiene(Math.min(100, this.levels.hygiene + 50));
 
         this.isSleeping = false;
 
         this.LastCleanedTime = LocalDateTime.now();
+
+        updateDerivedStates();
     }
 
     public void updateDerivedStates() {
@@ -353,62 +343,49 @@ public class Pet {
 
         this.isHappy = (this.levels.happy >= 50);
 
-//        if (this.happinessState != newHappinessState) {
-//            this.happinessState = newHappinessState;
-//            // TODO Opcional: registrar un evento de cambio de estado de felicidad
-//        }
+
+//            TODO Opcional: registrar un evento de cambio de estado de felicidad
+
     }
 
     private void updateCurrentHealthState() {
         int healthLevel = this.levels.getHealth();
         int hungryLevel = this.levels.getHungry();
 
-        // --- REVISED LOGIC ---
-        // The logic now follows a strict priority order to determine the pet's state.
 
-        // 1. Check for the most critical state: DEAD. This overrides everything.
         if (this.evolutionState == EvolutionState.DEAD) {
             this.healthState = HealthState.DEAD;
-            this.isSick = false; // A dead pet is not "sick"
+            this.isSick = false;
             return;
         }
 
-        // 2. Check for SICKNESS. This is the next highest priority.
-        // A pet is only SICK if its health points are critically low.
-        if (healthLevel <= HEALTH_THRESHOLD_CRITICAL) { // e.g., <= 10
+        if (healthLevel <= HEALTH_THRESHOLD_CRITICAL) {
             this.healthState = HealthState.SICK;
             this.isSick = true;
-            return; // Exit here. SICK is the definitive state.
+            return;
         }
 
-        // 3. Check for WEAKNESS due to critical stats (like hunger).
-        // This prevents a starving pet from being described as "STRONG".
-        if (hungryLevel >= HUNGER_THRESHOLD_CRITICAL) { // e.g., >= 80
+        if (hungryLevel >= HUNGER_THRESHOLD_CRITICAL) {
             this.healthState = HealthState.WEAK;
-            this.isSick = false; // It's weak from hunger, not medically sick.
-            return; // Exit here. WEAK is the definitive state for this condition.
+            this.isSick = false;
+            return;
         }
 
-        // 4. If no critical conditions are met, determine the state based on health level.
-        // This logic now only runs for pets that are not dead, sick, or starving.
-        if (healthLevel <= HEALTH_THRESHOLD_LOW) { // e.g., <= 30
+        if (healthLevel <= HEALTH_THRESHOLD_LOW) {
             this.healthState = HealthState.WEAK;
-        } else if (healthLevel >= HEALTH_THRESHOLD_VERY_HIGH) { // e.g., >= 85
+        } else if (healthLevel >= HEALTH_THRESHOLD_VERY_HIGH) {
             this.healthState = HealthState.FIT;
-        } else if (healthLevel >= HEALTH_THRESHOLD_HIGH) { // e.g., >= 65
+        } else if (healthLevel >= HEALTH_THRESHOLD_HIGH) {
             this.healthState = HealthState.STRONG;
         } else {
             this.healthState = HealthState.OK;
         }
 
-        // If we've reached this point, the pet is definitely not sick.
         this.isSick = false;
 
 
-//        if (this.healthState != this.healthState) {
-//            this.healthState = this.healthState;
-//            // TODO Opcional: registrar un evento de cambio de estado de salud
-//        }
+
+//            TODO Opcional: registrar un evento de cambio de estado de salud
     }
 
     private void updateCurrentEvolutionStateByAge() {
@@ -426,7 +403,7 @@ public class Pet {
             newEvolutionState = EvolutionState.TEENAGER;
         } else if (this.daysOld >= AGE_THRESHOLD_KID && this.evolutionState.ordinal() < EvolutionState.KID.ordinal()) {
             newEvolutionState = EvolutionState.KID;
-        } else if (this.evolutionState.ordinal() < EvolutionState.BABY.ordinal()){
+        } else {
             newEvolutionState = EvolutionState.BABY;
         }
 
@@ -442,6 +419,7 @@ public class Pet {
         if (this.levels.getHealth() <= 0 && this.evolutionState != EvolutionState.DEAD) {
             this.evolutionState = EvolutionState.DEAD;
             this.healthState = HealthState.DEAD;
+            this.levels.setHealth(0);
             this.levels.setHealth(0);
             this.levels.setHungry(0);
             this.levels.setEnergy(0);
