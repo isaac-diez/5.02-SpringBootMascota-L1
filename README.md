@@ -142,16 +142,16 @@ The frontend codebase is organized for clarity and scalability:
 Here are some representative views of the application:
 
 **Login Screen with Blurred Background**
-(![login_screenshot.jpg](../login_screenshot.jpg) "Login page with a full-screen background image and a centered, readable form.")
+(![login_screenshot.jpg](login_screenshot.jpg) "Login page with a full-screen background image and a centered, readable form.")
 
 **User's Pet List Page**
-![petlist_screenshot.jpeg](../petlist_screenshot.jpeg) "A grid view showing a user's collection of pets, with state-aware images and basic info.")
+![petlist_screenshot.jpeg](petlist_screenshot.jpeg) "A grid view showing a user's collection of pets, with state-aware images and basic info.")
 
 **Pet Detail Page with Actions**
-![petdetail_screenshot.jpeg](../petdetail_screenshot.jpeg) "A detailed view of a single pet, showing its image, stats, and a list of action buttons.")
+![petdetail_screenshot.jpeg](petdetail_screenshot.jpeg) "A detailed view of a single pet, showing its image, stats, and a list of action buttons.")
 
 **Admin Dashboard**
-![admin_screenshot.png](../admin_screenshot.png) "The admin-only view showing lists of all users and all pets in the system, with management options.")
+![admin_screenshot.png](admin_screenshot.png) "The admin-only view showing lists of all users and all pets in the system, with management options.")
 
 
 ## Setup and Installation
