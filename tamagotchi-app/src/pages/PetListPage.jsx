@@ -3,10 +3,10 @@ import { useAuth } from '../context/AuthContext';
 import apiClient from '../api/apiClient';
 import PetCard from '../components/pets/PetCard';
 import CreatePetForm from '../components/pets/CreatePetForm';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
 
-// --- NEW HELPER FUNCTION ---
-// This is the same function from AdminPage. It derives the 'healthState' string
-// that your PetImage component needs from the data we have available.
+
 const deriveHealthState = (pet) => {
   if (pet.healthState === 'DEAD') return 'dead';
   if (pet.healthState === 'SICK') return 'sick';
@@ -18,30 +18,24 @@ const deriveHealthState = (pet) => {
 
 
 const PetListPage = () => {
-    const { user, logout } = useAuth();
+    const { user, token, logout } = useAuth();
     const [pets, setPets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [isCreating, setIsCreating] = useState(false);
+    const [notification, setNotification] = useState('');
 
     useEffect(() => {
         const fetchPets = async () => {
             try {
                 setLoading(true);
-                // NOTE: The user's original file used `/pet/my-pets`, which is correct for this page.
                 const response = await apiClient.get('/pet/my-pets');
                 const petsFromApi = response.data || [];
-
-                // --- FIX ---
-                // We transform the pet data here, adding the 'healthState' property
-                // before setting the state. This makes the data compatible with your components.
                 const petsWithDerivedState = petsFromApi.map(pet => ({
                     ...pet,
                     healthState: deriveHealthState(pet)
                 }));
-
                 setPets(petsWithDerivedState);
-
             } catch (err) {
                 console.error("Error fetching pets:", err);
                 setError('Could not load your pets.');
@@ -52,8 +46,58 @@ const PetListPage = () => {
         fetchPets();
     }, []);
 
+    useEffect(() => {
+                // Only connect if we have a user and a token
+                if (user && token) {
+                    // Create a new STOMP client over a SockJS connection
+                    const client = new Client({
+                        webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+                        connectHeaders: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                        debug: (str) => {
+                            console.log('STOMP: ' + str);
+                        },
+                        reconnectDelay: 5000,
+                    });
+
+                    client.onConnect = (frame) => {
+                        console.log('Connected: ' + frame);
+                        // Subscribe to the user-specific queue.
+                        // The backend sends messages here for this user's pets.
+                        client.subscribe(`/user/${user.username}/queue/pet-updates`, (message) => {
+                            const updatedPet = JSON.parse(message.body);
+                            console.log('Received pet update:', updatedPet);
+
+                            // Find and update the pet in the local state
+                            setPets(prevPets =>
+                                prevPets.map(p =>
+                                    p.petId === updatedPet.petId
+                                        ? { ...p, ...updatedPet, healthState: deriveHealthState(updatedPet) } // Update pet with new data
+                                        : p
+                                )
+                            );
+                        });
+                    };
+
+                    client.onStompError = (frame) => {
+                        console.error('Broker reported error: ' + frame.headers['message']);
+                        console.error('Additional details: ' + frame.body);
+                    };
+
+                    // Activate the client
+                    client.activate();
+
+                    // Return a cleanup function to disconnect when the component unmounts
+                    return () => {
+                        client.deactivate();
+                        console.log('Disconnected STOMP client');
+                    };
+                }
+            }, [user, token]); // Rerun this effect if the user or token changes
+
     const handlePetCreated = (newPet) => {
-        // Also transform the newly created pet so its image shows correctly right away.
+
         const newPetWithState = {
             ...newPet,
             healthState: deriveHealthState(newPet)
@@ -90,7 +134,6 @@ const PetListPage = () => {
                          </div>
                     ) : (
                         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-                            {/* This part remains unchanged. It now passes the enhanced pet object to PetCard. */}
                             {pets.map(pet => (<PetCard key={pet.petId} pet={pet} />))}
                         </div>
                     )}

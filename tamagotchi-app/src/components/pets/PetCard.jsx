@@ -8,7 +8,6 @@ const PetCard = ({ pet }) => {
   }
 
   return (
-    // FIX: Ensure the link uses the `petId` property
     <Link to={`/pets/${pet.petId}`} className="block tamagotchi-container text-center hover:scale-105 transition-transform duration-200">
       <div className="p-4">
         <PetImage pet={pet} />

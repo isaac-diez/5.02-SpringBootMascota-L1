@@ -2,6 +2,7 @@ package cat.itacademy.s05.t02.n01.service.impl;
 
 import cat.itacademy.s05.t02.n01.Repo.PetRepo;
 import cat.itacademy.s05.t02.n01.dto.PetDto;
+import cat.itacademy.s05.t02.n01.dto.PetMapper;
 import cat.itacademy.s05.t02.n01.exception.EmptyPetListException;
 import cat.itacademy.s05.t02.n01.exception.PetNotFoundException;
 import cat.itacademy.s05.t02.n01.exception.UnauthorizedUserException;
@@ -11,6 +12,7 @@ import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +30,12 @@ public class PetServiceImpl implements PetService {
     @Autowired
     private PetRepo petRepo;
 
-    @Scheduled(fixedRate = 300000)
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+    @Autowired
+    private PetMapper petMapper;
+
+    @Scheduled(fixedRate = 5000)
     @Transactional
     public void updateAllPetsPassiveStates() {
         log.info("Ejecutando tarea programada: Actualizando estados pasivos de las mascotas...");
@@ -47,7 +54,22 @@ public class PetServiceImpl implements PetService {
                 pet.updateNeeds();
                 pet.updateDerivedStates();
 
-                petRepo.save(pet);
+                Pet updatedPet = petRepo.save(pet);
+
+                // --- NEW: Send update to the specific user via WebSocket ---
+                if (updatedPet.getUser() != null) {
+                    // Convert the updated pet to a DTO to send to the frontend
+                    var petDto = petMapper.toDetailDto(updatedPet);
+                    String username = updatedPet.getUser().getUsername();
+
+                    log.info("Pushing update for pet {} to user {}", petDto.getPetId(), username);
+                    // The destination is specific to the user, e.g., /user/isaac/queue/pet-updates
+                    messagingTemplate.convertAndSendToUser(
+                            username,
+                            "/queue/pet-updates",
+                            petDto
+                    );
+                }
 
             } catch (Exception e) {
                 log.error("Error al actualizar la mascota con ID {}: {}", pet.getPetId(), e.getMessage());
@@ -74,7 +96,6 @@ public class PetServiceImpl implements PetService {
         pet.setHappinessState(HappinessState.SATISFIED);
         pet.setEvolutionState(EvolutionState.BABY);
 
-        // Inicializar niveles
         Pet.Level initialLevels = new Pet.Level();
         initialLevels.setHungry(50);
         initialLevels.setEnergy(80);

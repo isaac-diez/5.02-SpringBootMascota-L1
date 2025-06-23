@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/auth/login",
                                 "/auth/register",
                                 "/user/new",
