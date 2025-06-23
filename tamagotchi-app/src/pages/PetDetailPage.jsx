@@ -5,10 +5,21 @@ import { useAuth } from '../context/AuthContext';
 import PetDisplay from '../components/pets/PetDisplay';
 import PetStats from '../components/pets/PetStats';
 import PetActions from '../components/pets/PetActions';
+import { Client } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+
+const deriveHealthState = (pet) => {
+  if (pet.healthState === 'DEAD') return 'dead';
+  if (pet.healthState === 'SICK') return 'sick';
+  if (pet.healthState === 'WEAK') return 'weak';
+  if (pet.healthState === 'OK') return 'ok';
+  if (pet.healthState === 'FIT') return 'fit';
+  return 'strong';
+};
 
 const PetDetailPage = () => {
+    const { user, token, logout } = useAuth();
     const { petId } = useParams();
-    const { logout } = useAuth(); // Assuming useAuth provides logout
     const navigate = useNavigate();
 
     const [pet, setPet] = useState(null);
@@ -35,7 +46,40 @@ const PetDetailPage = () => {
         fetchPetDetails();
     }, [petId]);
 
-    // This function will be called by PetActions to update the pet state
+    useEffect(() => {
+        if (user && token && pet) { // Only connect if we have a user, token, AND a pet loaded
+            const client = new Client({
+                webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
+                connectHeaders: { Authorization: `Bearer ${token}` },
+                reconnectDelay: 5000,
+            });
+
+            client.onConnect = (frame) => {
+                console.log('PetDetail Page: STOMP Connected!');
+                // Subscribe to the same user-specific queue
+                client.subscribe(`/user/${user.username}/queue/pet-updates`, (message) => {
+                    const updatedPetFromWS = JSON.parse(message.body);
+
+                    // IMPORTANT: Only update if the message is for the pet we are currently viewing
+                    if (updatedPetFromWS.petId == petId) {
+                        console.log('Received real-time update for this pet:', updatedPetFromWS);
+                        // Re-derive the healthState from the new data
+                        const petWithDerivedState = { ...updatedPetFromWS, healthState: deriveHealthState(updatedPetFromWS) };
+                        setPet(petWithDerivedState);
+                    }
+                });
+            };
+
+            client.activate();
+
+            // Cleanup function to disconnect when the component unmounts or the pet changes
+            return () => {
+                client.deactivate();
+                console.log('PetDetail Page: STOMP Disconnected.');
+            };
+        }
+    }, [user, token, pet, petId]); // Dependencies ensure we reconnect if needed
+
     const handlePetUpdate = (updatedPet) => {
         setPet(updatedPet);
     };
@@ -55,7 +99,6 @@ const PetDetailPage = () => {
             </header>
 
             <main>
-                {/* FIX: This class now creates a responsive 2-column grid correctly */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
 
                     {/* Left Column for the Image */}
