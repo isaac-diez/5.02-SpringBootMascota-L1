@@ -3,23 +3,23 @@ import React, { useEffect, useState } from 'react';
 const Notification = ({ message, duration = 4000, onClose }) => {
   const [visible, setVisible] = useState(false);
 
-  // This handles the fade-in and fade-out effect
+
   useEffect(() => {
-    // Fade in
+
     setVisible(true);
 
-    // Set a timer to automatically close the notification
+
     const timer = setTimeout(() => {
       setVisible(false);
-      // Allow time for the fade-out animation before calling onClose
+
       setTimeout(onClose, 500);
     }, duration);
 
-    // Clean up the timer if the component is unmounted early
+
     return () => clearTimeout(timer);
   }, [message, duration, onClose]);
 
-  // Determine notification style based on keywords
+
   const getNotificationStyle = () => {
     const lowerCaseMessage = message.toLowerCase();
     if (lowerCaseMessage.includes('sick')) return 'bg-red-500';

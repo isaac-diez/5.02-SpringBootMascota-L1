@@ -9,9 +9,6 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import Notification from '../components/common/Notification';
 
-// --- FIX #1: Using the more robust helper function ---
-// This function correctly derives the state from the pet's underlying levels,
-// just like we did on the other pages.
 const deriveHealthState = (pet) => {
   if (!pet) return 'ok';
   if (pet.evolutionState === 'DEAD') return 'dead';
@@ -33,21 +30,16 @@ const PetDetailPage = () => {
     const [error, setError] = useState('');
     const [notification, setNotification] = useState('');
 
-    // --- FIX #2: A dedicated function for checking and showing notifications ---
-    // This makes the logic much cleaner and easier to manage.
     const checkAndShowNotifications = (oldPet, newPet) => {
         const newHealthState = deriveHealthState(newPet);
         const oldHealthState = deriveHealthState(oldPet);
 
-        // Check if the pet just became sick
         if (newHealthState === 'sick' && oldHealthState !== 'sick') {
             setNotification(`${newPet.name} is now SICK!`);
         }
-        // Check if the pet just died
         else if (newHealthState === 'dead' && oldHealthState !== 'dead') {
             setNotification(`Oh no! ${newPet.name} has passed away.`);
         }
-        // Check if the pet just became very hungry
         else if (newPet.levels.hungry > 80 && oldPet.levels.hungry <= 80) {
             setNotification(`${newPet.name} is very HUNGRY!`);
         }
@@ -66,7 +58,6 @@ const PetDetailPage = () => {
 
     };
 
-    // This useEffect fetches the initial pet data
     useEffect(() => {
         const fetchPetDetails = async () => {
             if (!petId) {
@@ -88,7 +79,6 @@ const PetDetailPage = () => {
         fetchPetDetails();
     }, [petId]);
 
-    // This useEffect handles the real-time updates and triggers notifications
     useEffect(() => {
         if (user && token && pet) {
             const client = new Client({
@@ -102,11 +92,9 @@ const PetDetailPage = () => {
                     const updatedPetFromWS = JSON.parse(message.body);
 
                     if (String(updatedPetFromWS.petId) === petId) {
-                        // --- FIX #3: Use the new notification function ---
-                        // It compares the current pet state ('pet') with the incoming one.
+
                         checkAndShowNotifications(pet, updatedPetFromWS);
 
-                        // Update the pet state with the new data
                         const petWithDerivedState = { ...updatedPetFromWS, healthState: deriveHealthState(updatedPetFromWS) };
                         setPet(petWithDerivedState);
                     }
@@ -118,9 +106,8 @@ const PetDetailPage = () => {
         }
     }, [user, token, pet, petId]);
 
-    // This function gets called by PetActions after a user action
     const handlePetUpdate = (updatedPet) => {
-        // Also check for notifications after a manual action
+
         checkAndShowNotifications(pet, updatedPet);
         const petWithDerivedState = { ...updatedPet, healthState: deriveHealthState(updatedPet) };
         setPet(petWithDerivedState);

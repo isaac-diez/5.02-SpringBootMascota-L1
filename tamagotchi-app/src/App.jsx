@@ -11,7 +11,7 @@ import AdminPage from './pages/AdminPage';
 
 function App() {
   return (
-    // FIX: The <Router> must wrap the <AuthProvider>
+
     <Router>
       <AuthProvider>
         <Routes>

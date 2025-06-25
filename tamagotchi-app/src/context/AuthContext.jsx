@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
       }
     }
     setIsLoading(false);
-  }, []); // Note: This useEffect should only run once on initial load.
+  }, []);
 
   const login = async (username, password) => {
     try {
@@ -41,10 +41,8 @@ export const AuthProvider = ({ children }) => {
         apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
         const decodedToken = parseJwt(newToken);
 
-        // NEW: Set the user state immediately upon login.
-        // This solves the race condition where navigation happens before the user state is updated.
         setUser({ username: decodedToken.sub, role: decodedToken.role });
-        setToken(newToken); // Store token to maintain session across reloads
+        setToken(newToken);
 
         if (decodedToken && decodedToken.role && decodedToken.role === 'ROLE_ADMIN') {
           navigate('/admin');

@@ -13,7 +13,6 @@ const LoginPage = () => {
         setLoading(true);
         try {
             await login(credentials.username, credentials.password);
-            // Navigation is handled inside the login function in AuthContext
         } catch (err) {
             setError('Invalid username or password.');
             console.error(err);

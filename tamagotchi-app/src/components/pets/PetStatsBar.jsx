@@ -2,7 +2,7 @@ import React from 'react';
 
 const PetStatBar = ({ label, value, hexColor }) => {
     const percentage = Math.max(0, Math.min(100, value));
-    console.log(label, value);  // esto en PetStatBar
+    console.log(label, value);
 
     return (
         <div className="mb-2">

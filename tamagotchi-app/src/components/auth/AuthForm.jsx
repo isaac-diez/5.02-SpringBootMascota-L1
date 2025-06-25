@@ -9,8 +9,6 @@ const AuthForm = ({ isRegister, onSubmit, error, loading }) => {
     };
 
     const handleSubmit = async (e) => {
-        // --- THIS IS THE FIX ---
-        // This critical line stops the browser from reloading the page.
         e.preventDefault();
         await onSubmit(credentials);
     };

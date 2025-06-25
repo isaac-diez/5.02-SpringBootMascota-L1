@@ -125,13 +125,13 @@ public class Pet {
         double energyRateModifier = 1.0;
         switch (this.evolutionState) {
             case BABY:
-                hungerRateModifier = 1.5; // Los bebés tienen más hambre
+                hungerRateModifier = 1.5;
                 break;
             case ADULT:
-                hungerRateModifier = 0.8; // Los adultos aguantan más
+                hungerRateModifier = 0.8;
                 break;
             case SENIOR:
-                energyRateModifier = 1.2; // Los ancianos se cansan más rápido
+                energyRateModifier = 1.2;
                 break;
         }
 
@@ -219,7 +219,7 @@ public class Pet {
 
         this.levels.setHealth(Math.min(100, this.levels.health + 10));
         this.levels.setHungry(Math.max(0, this.levels.hungry - 20));
-        this.levels.setEnergy(Math.min(100, this.levels.energy + 20));
+        this.levels.setEnergy(Math.min(100, this.levels.energy + 30));
         this.levels.setHygiene(Math.max(0, this.levels.hygiene - 5));
         this.levels.setHappy(Math.min(100, this.levels.happy + 10));
 
@@ -374,9 +374,9 @@ public class Pet {
         if (healthLevel <= HEALTH_THRESHOLD_LOW) {
             this.healthState = HealthState.WEAK;
         } else if (healthLevel >= HEALTH_THRESHOLD_VERY_HIGH) {
-            this.healthState = HealthState.FIT;
-        } else if (healthLevel >= HEALTH_THRESHOLD_HIGH) {
             this.healthState = HealthState.STRONG;
+        } else if (healthLevel >= HEALTH_THRESHOLD_HIGH) {
+            this.healthState = HealthState.FIT;
         } else {
             this.healthState = HealthState.OK;
         }

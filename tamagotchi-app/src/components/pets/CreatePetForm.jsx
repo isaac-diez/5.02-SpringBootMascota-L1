@@ -3,8 +3,8 @@ import { useAuth } from '../../context/AuthContext';
 
 const CreatePetForm = ({ onPetCreated, onCancel }) => {
     const { createPet } = useAuth();
-    const [name, setName] = useState(''); // FIX: Use `name` to match backend DTO
-    const [type, setType] = useState('ANIMAL'); // FIX: Use `type` and default to ANIMAL
+    const [name, setName] = useState('');
+    const [type, setType] = useState('ANIMAL');
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -14,7 +14,6 @@ const CreatePetForm = ({ onPetCreated, onCancel }) => {
         setIsSubmitting(true);
         setError('');
         try {
-            // FIX: Send `name` and `type` to match the backend PetDto
             const newPet = await createPet({ name, type });
             onPetCreated(newPet);
         } catch (err) {

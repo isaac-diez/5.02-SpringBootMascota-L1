@@ -13,12 +13,9 @@ const AdminProtectedRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  // --- FIX: Simplified check for Admin Role ---
-  // This logic now correctly assumes the role is a string.
   const isAdmin = user.role === 'ROLE_ADMIN';
 
   if (!isAdmin) {
-    // If a non-admin user tries to access /admin, send them to their pets page.
     return <Navigate to="/pets" replace />;
   }
 

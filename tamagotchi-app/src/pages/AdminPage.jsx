@@ -3,14 +3,6 @@ import { useAuth } from '../context/AuthContext';
 import apiClient from '../api/apiClient';
 import PetImage from '../components/pets/PetImage';
 
-// --- NEW HELPER FUNCTION ---
-/**
- * Derives the `healthState` string from the pet data we have available.
- * This makes the data from the list endpoint compatible with your PetImage component.
- * You can adjust the thresholds to match your game's logic.
- * @param {object} pet - A pet object, which must have `evolutionState` and `happyLevel`.
- * @returns {string} - A health state string like 'dead', 'sick', 'fit', etc.
- */
 const deriveHealthState = (pet) => {
   if (pet.evolutionState === 'DEAD') return 'dead';
   if (pet.healthLevel < 10) return 'sick';
@@ -19,7 +11,6 @@ const deriveHealthState = (pet) => {
   if (pet.healthLevel < 85) return 'fit';
   return 'strong';
 };
-
 
 const AdminPage = () => {
   const { user, logout } = useAuth();
@@ -37,16 +28,13 @@ const AdminPage = () => {
         apiClient.get('/admin/pets/all')
       ]);
 
-      // --- FIX ---
-      // We loop through the pets received from the API and add the 'healthState'
-      // property that our PetImage component needs to function correctly.
       const petsWithDerivedState = petsResponse.data.map(pet => ({
         ...pet,
         healthState: deriveHealthState(pet)
       }));
 
       setUsers(usersResponse.data);
-      setPets(petsWithDerivedState); // Set state with the enhanced pet objects
+      setPets(petsWithDerivedState);
 
     } catch (err) {
       console.error("Failed to fetch admin data:", err);
@@ -60,7 +48,6 @@ const AdminPage = () => {
     fetchAdminData();
   }, [fetchAdminData]);
 
-  // Delete handlers are correct and remain unchanged
   const handleDeleteUser = async (userId, username) => {
     if (window.confirm(`Are you sure you want to delete ${username}? This will also delete their pets.`)) {
       try {
@@ -109,7 +96,7 @@ const AdminPage = () => {
           <div className="text-center font-pixel text-red-500 text-2xl p-8">{error}</div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Users Column */}
+
             <div className="tamagotchi-container p-4">
               <h2 className="font-pixel text-3xl mb-4">Users ({users.length})</h2>
               <ul className="space-y-3">
@@ -130,11 +117,9 @@ const AdminPage = () => {
               </ul>
             </div>
 
-            {/* Pets Column */}
             <div className="tamagotchi-container p-4">
               <h2 className="font-pixel text-3xl mb-4">All Pets ({pets.length})</h2>
               <ul className="space-y-4">
-                {/* The pet objects now have the healthState property, so PetImage will work perfectly */}
                 {pets.map(pet => (
                   <li key={pet.petId} className="bg-gray-100 p-3 rounded flex items-center gap-4">
                     <div className="w-40 h-40 flex-shrink-0">

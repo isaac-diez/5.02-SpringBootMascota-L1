@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import AuthForm from '../components/auth/AuthForm';
-import AuthLayout from '../components/layout/AuthLayout'; // <-- Import the new layout
+import AuthLayout from '../components/layout/AuthLayout';
 
 
 const RegisterPage = () => {
@@ -17,7 +17,7 @@ const RegisterPage = () => {
         setError('');
         setLoading(true);
         try {
-            // The register function now automatically logs the user in
+
             await register(credentials.username, credentials.password);
         } catch (err) {
             setError(err.response?.data?.message || 'That username is already taken.');

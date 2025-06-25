@@ -35,7 +35,7 @@ public class PetServiceImpl implements PetService {
     @Autowired
     private PetMapper petMapper;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 10000)
     @Transactional
     public void updateAllPetsPassiveStates() {
         log.info("Ejecutando tarea programada: Actualizando estados pasivos de las mascotas...");

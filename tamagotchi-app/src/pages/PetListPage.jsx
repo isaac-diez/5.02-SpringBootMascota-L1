@@ -47,9 +47,7 @@ const PetListPage = () => {
     }, []);
 
     useEffect(() => {
-                // Only connect if we have a user and a token
                 if (user && token) {
-                    // Create a new STOMP client over a SockJS connection
                     const client = new Client({
                         webSocketFactory: () => new SockJS('http://localhost:8080/ws'),
                         connectHeaders: {
@@ -63,13 +61,11 @@ const PetListPage = () => {
 
                     client.onConnect = (frame) => {
                         console.log('Connected: ' + frame);
-                        // Subscribe to the user-specific queue.
-                        // The backend sends messages here for this user's pets.
+
                         client.subscribe(`/user/${user.username}/queue/pet-updates`, (message) => {
                             const updatedPet = JSON.parse(message.body);
                             console.log('Received pet update:', updatedPet);
 
-                            // Find and update the pet in the local state
                             setPets(prevPets =>
                                 prevPets.map(p =>
                                     p.petId === updatedPet.petId
@@ -85,16 +81,15 @@ const PetListPage = () => {
                         console.error('Additional details: ' + frame.body);
                     };
 
-                    // Activate the client
+
                     client.activate();
 
-                    // Return a cleanup function to disconnect when the component unmounts
                     return () => {
                         client.deactivate();
                         console.log('Disconnected STOMP client');
                     };
                 }
-            }, [user, token]); // Rerun this effect if the user or token changes
+            }, [user, token]);
 
     const handlePetCreated = (newPet) => {
 
