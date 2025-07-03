@@ -19,6 +19,7 @@ public class WebConfig {
                         .allowedHeaders("*") // Permite todos los encabezados
                         .allowCredentials(true);
 
+
             }
         };
     }
